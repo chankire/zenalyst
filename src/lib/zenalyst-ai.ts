@@ -218,7 +218,7 @@ export class ZenalystAI {
     }
   }
 
-  private generateCorrelationResponse(question: string) {
+  private generateCorrelationResponse(_question: string) {
     const correlations = this.analysisResult!.correlations
     const strongCorrelations = correlations.filter(c => c.relationship === 'strong')
     
@@ -241,7 +241,6 @@ export class ZenalystAI {
     }))
 
     strongCorrelations.forEach(corr => {
-      const strength = Math.abs(corr.correlation)
       content += `🔗 **${corr.field1}** and **${corr.field2}**:\n`
       content += `   • ${corr.relationship} ${corr.type} correlation (${(corr.correlation * 100).toFixed(1)}%)\n`
       content += `   • Statistical significance: ${corr.significance.toFixed(1)}%\n`
@@ -258,7 +257,7 @@ export class ZenalystAI {
     }
   }
 
-  private generateForecastResponse(question: string) {
+  private generateForecastResponse(_question: string) {
     const forecasts = this.analysisResult!.forecasts
     const accurateForecasts = forecasts.filter(f => f.accuracy > 70)
     
@@ -308,7 +307,7 @@ export class ZenalystAI {
     }
   }
 
-  private generateAnomalyResponse(question: string) {
+  private generateAnomalyResponse(_question: string) {
     const anomalies = this.analysisResult!.anomalies
     
     if (anomalies.length === 0) {
@@ -358,7 +357,7 @@ export class ZenalystAI {
     }
   }
 
-  private generateRootCauseResponse(question: string) {
+  private generateRootCauseResponse(_question: string) {
     const rootCauses = this.analysisResult!.rootCauses
     
     if (rootCauses.length === 0) {
@@ -489,7 +488,7 @@ export class ZenalystAI {
   }
 
   // Helper methods
-  private calculateDateRange(data: DataPoint[]): { start: Date; end: Date } {
+  private calculateDateRange(_data: DataPoint[]): { start: Date; end: Date } {
     const now = new Date()
     return {
       start: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000), // 1 year ago

@@ -106,7 +106,7 @@ const DashboardPage = () => {
 
     try {
       const response = await zenalystAI.processQuestion(userMessage)
-      setAIMessages(prev => [...prev, { type: 'ai', content: response }])
+      setAIMessages(prev => [...prev, { type: 'ai', content: response.content }])
     } catch (error) {
       console.error('AI Error:', error)
       setAIMessages(prev => [...prev, { 

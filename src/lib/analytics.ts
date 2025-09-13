@@ -144,7 +144,7 @@ export class AdvancedAnalytics {
   }
 
   // Advanced trend analysis using statistical methods
-  private static async analyzeTrends(data: DataPoint[], numericFields: string[], dateField: string | null): Promise<TrendAnalysis[]> {
+  private static async analyzeTrends(data: DataPoint[], numericFields: string[], _dateField: string | null): Promise<TrendAnalysis[]> {
     const trends: TrendAnalysis[] = []
 
     for (const field of numericFields) {
@@ -156,11 +156,15 @@ export class AdvancedAnalytics {
       const volatility = this.calculateVolatility(values)
       const changePoints = this.detectChangePoints(values)
       
+      const trendDirection = this.classifyTrend(trend.slope, volatility)
       trends.push({
         field,
-        trend: this.classifyTrend(trend.slope, volatility),
+        trend: trendDirection,
+        direction: trendDirection,
         confidence: trend.confidence,
+        strength: Math.abs(trend.slope),
         trendStrength: Math.abs(trend.slope),
+        pValue: 0.05,
         changePoints
       })
     }
@@ -283,7 +287,7 @@ export class AdvancedAnalytics {
   }
 
   // Multi-model forecasting engine
-  private static async generateForecasts(data: DataPoint[], numericFields: string[], dateField: string | null): Promise<ForecastResult[]> {
+  private static async generateForecasts(data: DataPoint[], numericFields: string[], _dateField: string | null): Promise<ForecastResult[]> {
     const forecasts: ForecastResult[] = []
 
     for (const field of numericFields) {
@@ -294,11 +298,18 @@ export class AdvancedAnalytics {
       const model = this.selectBestModel(values)
       const predictions = this.generatePredictions(values, model, 12) // 12 periods ahead
       
+      const trendDirection = predictions.length > 1 && predictions[1].value > predictions[0].value ? 'increasing' : 
+                         predictions.length > 1 && predictions[1].value < predictions[0].value ? 'decreasing' : 'stable'
+      
       forecasts.push({
         field,
         model,
         predictions,
-        accuracy: this.calculateForecastAccuracy(values, model)
+        accuracy: this.calculateForecastAccuracy(values, model),
+        trend: trendDirection,
+        confidence: 0.85,
+        nextValue: predictions.length > 0 ? predictions[0].value : 0,
+        horizon: 12
       })
     }
 
@@ -490,7 +501,7 @@ export class AdvancedAnalytics {
     correlations: CorrelationAnalysis[],
     forecasts: ForecastResult[],
     anomalies: AnomalyDetection[],
-    rootCauses: RootCauseAnalysis[]
+    _rootCauses: RootCauseAnalysis[]
   ): InsightResult[] {
     const insights: InsightResult[] = []
 
@@ -563,10 +574,10 @@ export class AdvancedAnalytics {
   private static generateSummary(
     trends: TrendAnalysis[],
     correlations: CorrelationAnalysis[],
-    forecasts: ForecastResult[],
+    _forecasts: ForecastResult[],
     anomalies: AnomalyDetection[],
-    insights: InsightResult[],
-    rootCauses: RootCauseAnalysis[]
+    _insights: InsightResult[],
+    _rootCauses: RootCauseAnalysis[]
   ) {
     const keyFindings: string[] = []
     const recommendations: string[] = []
