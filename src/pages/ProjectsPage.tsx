@@ -6,7 +6,6 @@ import {
   BarChart3, 
   FileSpreadsheet, 
   Brain, 
-  Users, 
   Calendar,
   TrendingUp,
   Database,

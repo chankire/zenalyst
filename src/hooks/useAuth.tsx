@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(false)
   }, [])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, _password: string) => {
     try {
       // Demo authentication - accept any email/password
       const demoUser: User = {
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, _password: string, fullName: string) => {
     try {
       // Demo signup
       const demoUser: User = {

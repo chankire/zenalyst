@@ -28,7 +28,6 @@ import {
   Area, 
   BarChart, 
   Bar, 
-  LineChart as RechartsLineChart,
   Line,
   PieChart as RechartsPieChart,
   Pie,
