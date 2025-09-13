@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Zenalyst Nexus Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    
+    /* Primary brand colors */
+    --primary: 243 75% 59%; /* #6366f1 - Indigo */
+    --primary-glow: 243 75% 69%; /* Lighter primary */
+    --primary-foreground: 210 40% 98%;
+    
+    /* Secondary colors */
+    --secondary: 142 71% 45%; /* #10b981 - Emerald */
+    --secondary-foreground: 222.2 84% 4.9%;
+    
+    /* Accent colors */
+    --accent: 47 96% 53%; /* #eab308 - Yellow */
+    --accent-foreground: 222.2 84% 4.9%;
+    
+    /* Neutral colors */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 243 75% 59%;
+    
+    /* Semantic colors */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 243 75% 59%;
+    --primary-glow: 243 75% 69%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --accent: 47 96% 53%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 243 75% 59%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Custom gradient backgrounds */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+  }
+  
+  .gradient-card {
+    background: linear-gradient(145deg, 
+      hsl(var(--card)) 0%, 
+      hsl(var(--muted)) 100%);
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .glow-secondary {
+    box-shadow: 0 0 20px hsl(var(--secondary) / 0.3);
+  }
+  
+  /* Text gradients */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Dashboard specific styles */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1rem;
+    min-height: 100vh;
+  }
+  
+  .chart-container {
+    @apply bg-card border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
+  }
+  
+  /* Drag and drop styles */
+  .draggable {
+    @apply cursor-move hover:shadow-lg transition-shadow;
+  }
+  
+  .drop-zone {
+    @apply border-2 border-dashed border-muted-foreground/25 bg-muted/50 rounded-lg;
+  }
+  
+  .drop-zone-active {
+    @apply border-primary bg-primary/10;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Loading animations */
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.loading-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Chart animations */
+.recharts-wrapper {
+  @apply rounded-lg;
+}
+
+/* AI Chat styles */
+.ai-message {
+  @apply bg-primary/10 border-l-4 border-primary pl-4 py-2 rounded-r-lg;
+}
+
+.user-message {
+  @apply bg-secondary/10 border-r-4 border-secondary pr-4 py-2 rounded-l-lg ml-auto max-w-[80%];
+}

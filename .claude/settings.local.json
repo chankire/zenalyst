@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:localhost)",
+      "Bash(npm run build:*)",
+      "Bash(taskkill:*)",
+      "Bash(move \"src\\hooks\\useAuth.ts\" \"src\\hooks\\useAuth.tsx\")",
+      "Bash(ren:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
