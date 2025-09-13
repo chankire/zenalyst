@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { 
   TrendingUp, 
@@ -17,7 +17,11 @@ import {
   LineChart,
   Target,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Network,
+  TrendingUp as TrendIcon,
+  Zap,
+  FileText
 } from 'lucide-react'
 import { 
   AreaChart, 
@@ -36,16 +40,114 @@ import {
   ResponsiveContainer,
   Legend
 } from 'recharts'
+import { AnalysisResult } from '@/lib/analytics'
+import { ZenalystAI } from '@/lib/zenalyst-ai'
+import KnowledgeGraph from '@/components/charts/KnowledgeGraph'
 
 const DashboardPage = () => {
   const [searchParams] = useSearchParams()
   const isDemoMode = searchParams.get('demo') === 'true'
+  const isUploadedData = searchParams.get('uploaded') === 'true'
   const [activeInsightPersona, setActiveInsightPersona] = useState<'phd' | 'ceo' | 'manager'>('ceo')
   const [showAIChat, setShowAIChat] = useState(false)
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [selectedDateRange, setSelectedDateRange] = useState('last-30-days')
   const [selectedMetrics, setSelectedMetrics] = useState(['revenue', 'users', 'conversion'])
   const [showDataSchema, setShowDataSchema] = useState(false)
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResult | null>(null)
+  const [rawData, setRawData] = useState<any[]>([])
+  const [fileName, setFileName] = useState('')
+  const [zenalystAI, setZenalystAI] = useState<ZenalystAI | null>(null)
+  const [aiMessages, setAIMessages] = useState<Array<{type: 'user' | 'ai', content: string}>>([])
+  const [aiInput, setAIInput] = useState('')
+
+  // Load analysis results if uploaded data
+  useEffect(() => {
+    if (isUploadedData) {
+      const storedResults = localStorage.getItem('zenalyst_analysis_results')
+      const storedData = localStorage.getItem('zenalyst_raw_data')
+      const storedFileName = localStorage.getItem('zenalyst_file_name')
+      
+      if (storedResults && storedData) {
+        const results = JSON.parse(storedResults) as AnalysisResult
+        const data = JSON.parse(storedData)
+        
+        setAnalysisResults(results)
+        setRawData(data)
+        setFileName(storedFileName || 'uploaded_data.csv')
+        
+        // Initialize Zenalyst AI with the uploaded data
+        const ai = new ZenalystAI(data)
+        setZenalystAI(ai)
+        
+        // Set welcome message for uploaded data
+        setAIMessages([{
+          type: 'ai',
+          content: `Hello! I've analyzed your ${storedFileName || 'uploaded data'} and discovered ${results.summary.keyFindings.length} key insights. I can provide detailed analysis from PhD statistical perspective, strategic CEO insights, or actionable manager recommendations. What would you like to explore?`
+        }])
+      }
+    } else if (isDemoMode) {
+      // Initialize demo AI
+      const demoAI = new ZenalystAI([]) // Empty data for demo
+      setZenalystAI(demoAI)
+      setAIMessages([{
+        type: 'ai',
+        content: 'Hello! I\'m your Zenalyst AI assistant. I can help you understand your data with PhD-level analysis, CEO strategic insights, or manager action plans. What would you like to explore?'
+      }])
+    }
+  }, [isUploadedData, isDemoMode])
+
+  // Handle AI chat
+  const handleAIMessage = async () => {
+    if (!aiInput.trim() || !zenalystAI) return
+
+    const userMessage = aiInput.trim()
+    setAIMessages(prev => [...prev, { type: 'user', content: userMessage }])
+    setAIInput('')
+
+    try {
+      const response = await zenalystAI.processQuestion(userMessage)
+      setAIMessages(prev => [...prev, { type: 'ai', content: response }])
+    } catch (error) {
+      console.error('AI Error:', error)
+      setAIMessages(prev => [...prev, { 
+        type: 'ai', 
+        content: 'I apologize, but I encountered an error processing your question. Please try again or rephrase your question.' 
+      }])
+    }
+  }
+
+  // Generate insights based on analysis results
+  const enhancedInsights = useMemo(() => {
+    if (!analysisResults) return insights
+
+    const { summary, trends, correlations, rootCauses, forecasts, anomalies } = analysisResults
+
+    return {
+      phd: {
+        title: "PhD Statistical Analysis",
+        content: `Advanced statistical analysis of ${fileName} reveals ${summary.keyFindings.length} significant findings. ${trends.length > 0 ? `Trend analysis shows ${trends[0].direction} pattern with ${(trends[0].strength * 100).toFixed(1)}% confidence.` : ''} ${correlations.length > 0 ? `Correlation analysis identified ${correlations.length} significant relationships, with strongest correlation (r=${correlations[0].correlation.toFixed(3)}) between ${correlations[0].field1} and ${correlations[0].field2}.` : ''} ${anomalies.length > 0 ? `Anomaly detection flagged ${anomalies.length} outliers requiring investigation.` : ''}`,
+        confidence: Math.round(summary.confidenceScore * 100),
+        dataQuality: summary.dataQuality,
+        methodology: "Multi-variate statistical analysis with ML-enhanced pattern recognition"
+      },
+      ceo: {
+        title: "Strategic Executive Summary",
+        content: `Analysis of ${fileName} reveals critical business insights: ${summary.keyFindings.slice(0, 3).join(', ')}. ${forecasts.length > 0 ? `Forecasting models predict ${forecasts[0].trend} trajectory with ${(forecasts[0].confidence * 100).toFixed(1)}% confidence.` : ''} ${rootCauses.length > 0 ? `Root cause analysis indicates ${rootCauses[0].effect} is primarily driven by ${rootCauses[0].causes[0]?.cause}.` : ''} Immediate strategic focus required on key performance drivers.`,
+        confidence: Math.round(summary.confidenceScore * 100),
+        keyActions: summary.recommendations.slice(0, 3),
+        riskLevel: anomalies.length > 2 ? "High" : anomalies.length > 0 ? "Medium" : "Low"
+      },
+      manager: {
+        title: "Operational Action Plan",
+        content: `Immediate operational priorities from ${fileName} analysis: ${summary.recommendations.join(', ')}. ${trends.length > 0 ? `Primary trend shows ${trends[0].direction} pattern requiring ${trends[0].strength > 0.7 ? 'immediate' : 'planned'} intervention.` : ''} Focus on data-driven execution of identified opportunities.`,
+        confidence: Math.round(summary.confidenceScore * 100),
+        timeline: "1-2 weeks",
+        resources: `${Math.ceil(summary.keyFindings.length / 2)} team members`,
+        priority: anomalies.length > 1 ? "High" : "Medium"
+      }
+    }
+  }, [analysisResults, fileName])
 
   // Sample data for demo
   const kpiData = [
@@ -145,10 +247,15 @@ const DashboardPage = () => {
               </Link>
               <div>
                 <h1 className="text-xl font-semibold">
-                  {isDemoMode ? 'Demo: Sales Analytics Dashboard' : 'Analytics Dashboard'}
+                  {isUploadedData ? `Analytics: ${fileName}` : isDemoMode ? 'Demo: Sales Analytics Dashboard' : 'Analytics Dashboard'}
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  {isDemoMode ? 'Sample data showcasing cognitive insights' : 'Real-time business analytics'}
+                  {isUploadedData 
+                    ? `${rawData.length} records • Advanced ML insights available` 
+                    : isDemoMode 
+                      ? 'Sample data showcasing cognitive insights' 
+                      : 'Real-time business analytics'
+                  }
                 </p>
               </div>
             </div>
@@ -412,6 +519,133 @@ const DashboardPage = () => {
           </div>
         </div>
 
+        {/* Advanced Analytics Sections - Only show for uploaded data */}
+        {isUploadedData && analysisResults && (
+          <>
+            {/* Trends and Forecasting */}
+            {analysisResults.trends.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                {/* Trend Analysis */}
+                <div className="p-6 bg-card border rounded-xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Trend Analysis</h3>
+                      <p className="text-sm text-muted-foreground">Statistical trend detection</p>
+                    </div>
+                    <TrendIcon className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-4">
+                    {analysisResults.trends.slice(0, 3).map((trend, index) => (
+                      <div key={index} className="p-4 bg-muted/30 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">{trend.field}</span>
+                          <span className={`text-sm font-medium px-2 py-1 rounded ${
+                            trend.direction === 'increasing' ? 'bg-secondary/20 text-secondary' :
+                            trend.direction === 'decreasing' ? 'bg-destructive/20 text-destructive' :
+                            'bg-muted text-muted-foreground'
+                          }`}>
+                            {trend.direction}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>Strength: {(trend.strength * 100).toFixed(1)}%</span>
+                          <span>p-value: {trend.pValue?.toFixed(4) || 'N/A'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Forecasting */}
+                {analysisResults.forecasts.length > 0 && (
+                  <div className="p-6 bg-card border rounded-xl">
+                    <div className="flex items-center justify-between mb-6">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">ML Forecasting</h3>
+                        <p className="text-sm text-muted-foreground">Predictive analytics</p>
+                      </div>
+                      <Zap className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div className="space-y-4">
+                      {analysisResults.forecasts.slice(0, 3).map((forecast, index) => (
+                        <div key={index} className="p-4 bg-muted/30 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium">{forecast.field}</span>
+                            <span className="text-sm bg-primary/20 text-primary px-2 py-1 rounded">
+                              {forecast.model}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
+                            <div>
+                              <span className="block">Trend: {forecast.trend}</span>
+                              <span className="block">Confidence: {(forecast.confidence * 100).toFixed(1)}%</span>
+                            </div>
+                            <div>
+                              <span className="block">Next Value: {forecast.nextValue?.toFixed(2) || 'N/A'}</span>
+                              <span className="block">Horizon: {forecast.horizon} periods</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Knowledge Graph and Correlations */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              {/* Knowledge Graph */}
+              {(analysisResults.correlations.length > 0 || analysisResults.rootCauses.length > 0) && (
+                <div className="p-6 bg-card border rounded-xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Knowledge Graph</h3>
+                      <p className="text-sm text-muted-foreground">Data relationships visualization</p>
+                    </div>
+                    <Network className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <KnowledgeGraph 
+                    correlations={analysisResults.correlations}
+                    rootCauses={analysisResults.rootCauses}
+                    width={500}
+                    height={300}
+                  />
+                </div>
+              )}
+
+              {/* Key Findings */}
+              <div className="p-6 bg-card border rounded-xl">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1">Key Insights</h3>
+                    <p className="text-sm text-muted-foreground">Auto-discovered findings</p>
+                  </div>
+                  <FileText className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <div className="space-y-3">
+                  {analysisResults.summary.keyFindings.map((finding, index) => (
+                    <div key={index} className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <p className="text-sm">{finding}</p>
+                    </div>
+                  ))}
+                  {analysisResults.summary.recommendations.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="font-medium mb-2">Recommendations:</h4>
+                      {analysisResults.summary.recommendations.map((rec, index) => (
+                        <div key={index} className="flex items-start space-x-2 mb-2">
+                          <div className="w-1.5 h-1.5 bg-secondary rounded-full mt-2"></div>
+                          <p className="text-sm text-muted-foreground">{rec}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
         {/* Cognitive Insights Panel */}
         <div className="mb-8">
           <div className="p-6 bg-gradient-to-r from-primary/5 to-secondary/5 border rounded-xl">
@@ -430,7 +664,7 @@ const DashboardPage = () => {
                 className="px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all flex items-center space-x-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>Ask AI</span>
+                <span>Zenalyst AI</span>
               </button>
             </div>
 
@@ -459,30 +693,30 @@ const DashboardPage = () => {
             {/* Insight Content */}
             <div className="p-6 bg-card border rounded-lg">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold">{insights[activeInsightPersona].title}</h4>
+                <h4 className="font-semibold">{enhancedInsights[activeInsightPersona].title}</h4>
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <CheckCircle className="w-4 h-4 text-secondary" />
-                    <span>Confidence: {insights[activeInsightPersona].confidence}%</span>
+                    <span>Confidence: {enhancedInsights[activeInsightPersona].confidence}%</span>
                   </div>
-                  {activeInsightPersona === 'ceo' && (
+                  {activeInsightPersona === 'ceo' && enhancedInsights.ceo.riskLevel && (
                     <div className="flex items-center space-x-1">
                       <AlertTriangle className="w-4 h-4 text-accent" />
-                      <span>Risk: {insights.ceo.riskLevel}</span>
+                      <span>Risk: {enhancedInsights.ceo.riskLevel}</span>
                     </div>
                   )}
                 </div>
               </div>
               
               <p className="text-muted-foreground leading-relaxed mb-4">
-                {insights[activeInsightPersona].content}
+                {enhancedInsights[activeInsightPersona].content}
               </p>
 
-              {activeInsightPersona === 'ceo' && insights.ceo.keyActions && (
+              {activeInsightPersona === 'ceo' && enhancedInsights.ceo.keyActions && (
                 <div className="mt-4">
                   <h5 className="font-medium mb-2">Key Strategic Actions:</h5>
                   <ul className="space-y-1">
-                    {insights.ceo.keyActions.map((action, index) => (
+                    {enhancedInsights.ceo.keyActions.map((action, index) => (
                       <li key={index} className="flex items-center space-x-2 text-sm">
                         <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                         <span>{action}</span>
@@ -492,19 +726,19 @@ const DashboardPage = () => {
                 </div>
               )}
 
-              {activeInsightPersona === 'manager' && (
+              {activeInsightPersona === 'manager' && enhancedInsights.manager.timeline && (
                 <div className="grid grid-cols-3 gap-4 mt-4 p-4 bg-muted/50 rounded-lg">
                   <div>
                     <p className="text-sm font-medium">Timeline</p>
-                    <p className="text-sm text-muted-foreground">{insights.manager.timeline}</p>
+                    <p className="text-sm text-muted-foreground">{enhancedInsights.manager.timeline}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium">Resources</p>
-                    <p className="text-sm text-muted-foreground">{insights.manager.resources}</p>
+                    <p className="text-sm text-muted-foreground">{enhancedInsights.manager.resources}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium">Priority</p>
-                    <p className="text-sm text-muted-foreground">{insights.manager.priority}</p>
+                    <p className="text-sm text-muted-foreground">{enhancedInsights.manager.priority}</p>
                   </div>
                 </div>
               )}
@@ -534,8 +768,10 @@ const DashboardPage = () => {
                     <Brain className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold">AI Data Assistant</h3>
-                    <p className="text-sm text-muted-foreground">Ask questions about your data</p>
+                    <h3 className="text-lg font-semibold">Zenalyst AI</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {isUploadedData ? 'Dataset-specific insights and analysis' : 'Ask questions about your data'}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -549,33 +785,33 @@ const DashboardPage = () => {
             
             <div className="p-6">
               <div className="space-y-4 mb-4 max-h-96 overflow-y-auto">
-                <div className="ai-message">
-                  <p className="text-sm">
-                    Hello! I'm your cognitive analytics assistant. I can help you understand your data with PhD-level analysis, 
-                    CEO strategic insights, or manager action plans. What would you like to explore?
-                  </p>
-                </div>
-                
-                <div className="user-message">
-                  <p className="text-sm">Why did our conversion rate drop in April?</p>
-                </div>
-                
-                <div className="ai-message">
-                  <p className="text-sm">
-                    Based on my analysis, the conversion rate decline (-2.1%) correlates with the pricing changes implemented in April. 
-                    The statistical significance (p&lt;0.05) suggests this isn't random variance. I recommend A/B testing the new pricing 
-                    structure and analyzing user behavior at the checkout stage.
-                  </p>
-                </div>
+                {aiMessages.map((message, index) => (
+                  <div key={index} className={message.type === 'ai' ? 'ai-message' : 'user-message'}>
+                    <div className={`p-3 rounded-lg ${
+                      message.type === 'ai' 
+                        ? 'bg-primary/5 border border-primary/20' 
+                        : 'bg-muted/50 ml-8'
+                    }`}>
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
               
               <div className="flex space-x-2">
                 <input
                   type="text"
-                  placeholder="Ask a question about your data..."
+                  placeholder={isUploadedData ? "Ask about your data analysis..." : "Ask a question about your data..."}
+                  value={aiInput}
+                  onChange={(e) => setAIInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleAIMessage()}
                   className="flex-1 px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                 />
-                <button className="px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all">
+                <button 
+                  onClick={handleAIMessage}
+                  disabled={!aiInput.trim() || !zenalystAI}
+                  className="px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Send
                 </button>
               </div>

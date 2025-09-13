@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { 
   Plus, 
@@ -10,9 +10,13 @@ import {
   Calendar,
   TrendingUp,
   Database,
-  Zap
+  Zap,
+  Loader2,
+  Sparkles,
+  Activity
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { AdvancedAnalytics } from '@/lib/analytics'
 
 interface Project {
   id: string
@@ -31,6 +35,8 @@ const ProjectsPage = () => {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analysisProgress, setAnalysisProgress] = useState('')
   const [projects] = useState<Project[]>([
     {
       id: '1',
@@ -68,10 +74,84 @@ const ProjectsPage = () => {
     }
   }
 
-  const handleCreateDashboard = () => {
-    // Close modal and navigate to dashboard
-    setShowUploadModal(false)
-    navigate('/dashboard?demo=true')
+  const parseFileToData = useCallback(async (file: File): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      
+      reader.onload = (e) => {
+        const content = e.target?.result as string
+        
+        try {
+          if (file.name.endsWith('.json')) {
+            const data = JSON.parse(content)
+            resolve(Array.isArray(data) ? data : [data])
+          } else if (file.name.endsWith('.csv')) {
+            // Simple CSV parser
+            const lines = content.split('\n').filter(line => line.trim())
+            const headers = lines[0].split(',').map(h => h.trim())
+            const data = lines.slice(1).map(line => {
+              const values = line.split(',').map(v => v.trim())
+              const obj: any = {}
+              headers.forEach((header, i) => {
+                const value = values[i] || ''
+                // Try to parse as number if possible
+                obj[header] = isNaN(Number(value)) ? value : Number(value)
+              })
+              return obj
+            })
+            resolve(data)
+          } else {
+            reject(new Error('Unsupported file format'))
+          }
+        } catch (error) {
+          reject(error)
+        }
+      }
+      
+      reader.onerror = () => reject(new Error('Failed to read file'))
+      reader.readAsText(file)
+    })
+  }, [])
+
+  const handleCreateDashboard = async () => {
+    if (selectedFile) {
+      setIsAnalyzing(true)
+      setAnalysisProgress('Reading file...')
+      
+      try {
+        // Parse the uploaded file
+        const data = await parseFileToData(selectedFile)
+        
+        setAnalysisProgress('Initializing advanced analytics...')
+        const analytics = new AdvancedAnalytics()
+        
+        setAnalysisProgress('Performing instant analysis...')
+        const analysisResults = await analytics.performInstantAnalysis(data)
+        
+        // Store analysis results in localStorage for dashboard to use
+        localStorage.setItem('zenalyst_analysis_results', JSON.stringify(analysisResults))
+        localStorage.setItem('zenalyst_raw_data', JSON.stringify(data))
+        localStorage.setItem('zenalyst_file_name', selectedFile.name)
+        
+        setAnalysisProgress('Complete! Loading dashboard...')
+        
+        // Navigate to dashboard with uploaded data
+        setShowUploadModal(false)
+        setIsAnalyzing(false)
+        navigate('/dashboard?uploaded=true')
+      } catch (error) {
+        console.error('Analysis failed:', error)
+        setIsAnalyzing(false)
+        setAnalysisProgress('')
+        // Navigate to demo dashboard on error
+        setShowUploadModal(false)
+        navigate('/dashboard?demo=true')
+      }
+    } else {
+      // Demo mode
+      setShowUploadModal(false)
+      navigate('/dashboard?demo=true')
+    }
   }
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -317,20 +397,48 @@ const ProjectsPage = () => {
                 </div>
               </div>
 
+              {/* Analysis Progress */}
+              {isAnalyzing && (
+                <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                    <div className="flex-1">
+                      <h4 className="font-medium text-primary mb-1">Analyzing Your Data</h4>
+                      <p className="text-sm text-muted-foreground">{analysisProgress}</p>
+                    </div>
+                    <Sparkles className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="mt-3 bg-primary/10 rounded-full h-2">
+                    <div className="bg-primary h-2 rounded-full animate-pulse" style={{width: '60%'}}></div>
+                  </div>
+                </div>
+              )}
+
               {/* Action Buttons */}
               <div className="flex space-x-3">
                 <button
                   onClick={() => setShowUploadModal(false)}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                  disabled={isAnalyzing}
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreateDashboard}
-                  disabled={!selectedFile}
-                  className="flex-1 px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={(!selectedFile && !isAnalyzing) || isAnalyzing}
+                  className="flex-1 px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
-                  Create Dashboard
+                  {isAnalyzing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Analyzing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Activity className="w-4 h-4" />
+                      <span>Start Analysis</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
