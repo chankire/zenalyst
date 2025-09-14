@@ -951,7 +951,7 @@ export class AdvancedAnalytics {
     return intervals
   }
 
-  private static calculateMeanConfidenceInterval(values: number[], confidenceLevel: number) {
+  private static calculateMeanConfidenceInterval(values: number[], _confidenceLevel: number) {
     const n = values.length
     const mean = values.reduce((a, b) => a + b, 0) / n
     const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / (n - 1)

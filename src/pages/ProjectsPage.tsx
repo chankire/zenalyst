@@ -23,6 +23,7 @@ interface Project {
   id: string
   name: string
   description: string
+  status: string
   datasetsCount: number
   dashboardsCount: number
   lastActivity: string
@@ -48,6 +49,7 @@ const ProjectsPage = () => {
       id: '1',
       name: 'Sales Analytics Q4',
       description: 'Quarterly sales performance analysis with regional breakdowns',
+      status: 'Active',
       datasetsCount: 3,
       dashboardsCount: 5,
       lastActivity: '2 hours ago',
@@ -57,6 +59,7 @@ const ProjectsPage = () => {
       id: '2', 
       name: 'Customer Behavior Study',
       description: 'Deep dive into customer journey and conversion patterns',
+      status: 'In Progress',
       datasetsCount: 7,
       dashboardsCount: 3,
       lastActivity: '1 day ago',
@@ -66,6 +69,7 @@ const ProjectsPage = () => {
       id: '3',
       name: 'Marketing ROI Analysis',
       description: 'Campaign effectiveness and budget optimization insights',
+      status: 'Completed',
       datasetsCount: 4,
       dashboardsCount: 8,
       lastActivity: '3 days ago',
@@ -681,8 +685,9 @@ const ProjectsPage = () => {
                         name: newProjectName.trim(),
                         description: newProjectDescription.trim(),
                         status: 'In Progress',
-                        lastModified: new Date().toLocaleDateString(),
-                        dataPoints: Math.floor(Math.random() * 10000) + 1000,
+                        lastActivity: new Date().toLocaleDateString(),
+                        datasetsCount: Math.floor(Math.random() * 5) + 1,
+                        dashboardsCount: Math.floor(Math.random() * 3) + 1,
                         insights: Math.floor(Math.random() * 50) + 10
                       }
                       setProjects(prev => [newProject, ...prev])

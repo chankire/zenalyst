@@ -16,14 +16,14 @@ interface ExportSystemProps {
   fileName: string
 }
 
-interface ExportConfig {
-  format: 'pdf' | 'excel' | 'csv' | 'json' | 'png' | 'svg'
-  sections: string[]
-  includeRawData: boolean
-  includeCharts: boolean
-  includeInsights: boolean
-  includeStatistics: boolean
-}
+// interface ExportConfig {
+//   format: 'pdf' | 'excel' | 'csv' | 'json' | 'png' | 'svg'
+//   sections: string[]
+//   includeRawData: boolean
+//   includeCharts: boolean
+//   includeInsights: boolean
+//   includeStatistics: boolean
+// }
 
 interface AutoReportConfig {
   frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly'

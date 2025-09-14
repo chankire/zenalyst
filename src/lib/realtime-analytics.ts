@@ -264,10 +264,17 @@ export class RealTimeAnalyticsEngine {
       // Update correlation patterns
       this.updateCorrelationPatterns()
       
-      // Notify subscribers of insights
+      // Notify subscribers of insights and anomalies
       insights.forEach(insight => {
         this.notifySubscribers('insight:new', insight)
       })
+      
+      // Notify subscribers of detected anomalies
+      if (anomalies.length > 0) {
+        anomalies.forEach(anomaly => {
+          this.notifySubscribers('anomaly:detected', anomaly)
+        })
+      }
       
     } catch (error) {
       console.error('Real-time processing error:', error)
