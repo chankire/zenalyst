@@ -58,6 +58,14 @@ const DashboardPage = () => {
   const [zenalystAI, setZenalystAI] = useState<ZenalystAI | null>(null)
   const [aiMessages, setAIMessages] = useState<Array<{type: 'user' | 'ai', content: string}>>([])
   const [aiInput, setAIInput] = useState('')
+  
+  // Chart builder state
+  const [chartConfig, setChartConfig] = useState({
+    chartType: 'line' as 'line' | 'bar' | 'area' | 'pie' | 'scatter',
+    xAxis: '',
+    yAxis: '',
+    groupBy: ''
+  })
 
   // Load analysis results if uploaded data
   useEffect(() => {
@@ -114,6 +122,97 @@ const DashboardPage = () => {
         content: 'I apologize, but I encountered an error processing your question. Please try again or rephrase your question.' 
       }])
     }
+  }
+
+  // Generate sample data for chart preview
+  const generatePreviewData = (xAxis: string, yAxis: string, groupBy?: string) => {
+    if (!xAxis || !yAxis) return []
+    
+    const sampleData: any[] = []
+    const xValues = xAxis === 'date' 
+      ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+      : xAxis === 'region'
+      ? ['North America', 'Europe', 'Asia Pacific', 'Latin America']
+      : xAxis === 'product_category'
+      ? ['Electronics', 'Clothing', 'Home', 'Sports']
+      : ['Category A', 'Category B', 'Category C']
+    
+    const groups = groupBy === 'traffic_source' 
+      ? ['Organic', 'Paid', 'Social']
+      : groupBy === 'customer_segment'
+      ? ['Enterprise', 'SMB', 'Individual'] 
+      : [null]
+    
+    groups.forEach(group => {
+      xValues.forEach((x, i) => {
+        const baseValue = yAxis === 'revenue' 
+          ? Math.random() * 100000 + 50000
+          : yAxis === 'users'
+          ? Math.random() * 10000 + 5000
+          : Math.random() * 0.1 + 0.05
+        
+        const dataPoint: any = { [xAxis]: x }
+        dataPoint[yAxis] = Math.round(baseValue * (1 + Math.sin(i) * 0.3))
+        
+        if (group) dataPoint[groupBy!] = group
+        sampleData.push(dataPoint)
+      })
+    })
+    
+    return sampleData
+  }
+
+  // Render dynamic chart based on configuration
+  const renderPreviewChart = () => {
+    const { chartType, xAxis, yAxis, groupBy } = chartConfig
+    
+    if (!xAxis || !yAxis) {
+      return (
+        <div className="h-64 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">
+            Select X-axis and Y-axis fields to preview your chart
+          </p>
+        </div>
+      )
+    }
+    
+    const data = generatePreviewData(xAxis, yAxis, groupBy)
+    
+    return (
+      <div className="h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          {chartType === 'line' ? (
+            <AreaChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey={xAxis} />
+              <YAxis />
+              <Tooltip />
+              <Area type="monotone" dataKey={yAxis} stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} />
+            </AreaChart>
+          ) : chartType === 'bar' ? (
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey={xAxis} />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey={yAxis} fill="#6366f1" />
+            </BarChart>
+          ) : chartType === 'area' ? (
+            <AreaChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey={xAxis} />
+              <YAxis />
+              <Tooltip />
+              <Area type="monotone" dataKey={yAxis} stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
+            </AreaChart>
+          ) : (
+            <div className="h-full bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg flex items-center justify-center">
+              <p className="text-muted-foreground text-sm">Chart type not supported yet</p>
+            </div>
+          )}
+        </ResponsiveContainer>
+      </div>
+    )
   }
 
   // Default insights for demo/fallback scenarios
@@ -879,7 +978,11 @@ const DashboardPage = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Chart Type</label>
-                    <select className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select 
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      value={chartConfig.chartType}
+                      onChange={(e) => setChartConfig(prev => ({ ...prev, chartType: e.target.value as any }))}
+                    >
                       <option value="line">Line Chart</option>
                       <option value="bar">Bar Chart</option>
                       <option value="area">Area Chart</option>
@@ -890,7 +993,11 @@ const DashboardPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">X-Axis</label>
-                    <select className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select 
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      value={chartConfig.xAxis}
+                      onChange={(e) => setChartConfig(prev => ({ ...prev, xAxis: e.target.value }))}
+                    >
                       <option value="">Select field...</option>
                       <option value="date">Date</option>
                       <option value="region">Region</option>
@@ -900,7 +1007,11 @@ const DashboardPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Y-Axis</label>
-                    <select className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select 
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      value={chartConfig.yAxis}
+                      onChange={(e) => setChartConfig(prev => ({ ...prev, yAxis: e.target.value }))}
+                    >
                       <option value="">Select field...</option>
                       <option value="revenue">Revenue</option>
                       <option value="users">Users</option>
@@ -910,7 +1021,11 @@ const DashboardPage = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Group By (Optional)</label>
-                    <select className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <select 
+                      className="w-full px-3 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                      value={chartConfig.groupBy}
+                      onChange={(e) => setChartConfig(prev => ({ ...prev, groupBy: e.target.value }))}
+                    >
                       <option value="">None</option>
                       <option value="traffic_source">Traffic Source</option>
                       <option value="customer_segment">Customer Segment</option>
@@ -927,12 +1042,8 @@ const DashboardPage = () => {
 
                 {/* Preview */}
                 <div className="mt-6 p-4 border border-border rounded-lg bg-muted/20">
-                  <h4 className="text-sm font-medium mb-2">Chart Preview</h4>
-                  <div className="h-32 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">
-                      Select fields above to preview your chart
-                    </p>
-                  </div>
+                  <h4 className="text-sm font-medium mb-2">Live Chart Preview</h4>
+                  {renderPreviewChart()}
                 </div>
               </div>
             </div>
