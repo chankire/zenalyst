@@ -76,7 +76,8 @@ const DashboardPage = () => {
         setFileName(storedFileName || 'uploaded_data.csv')
         
         // Initialize Zenalyst AI with the uploaded data
-        const ai = new ZenalystAI(data)
+        const ai = new ZenalystAI()
+        ai.setDataset(data, results)
         setZenalystAI(ai)
         
         // Set welcome message for uploaded data
@@ -87,7 +88,7 @@ const DashboardPage = () => {
       }
     } else if (isDemoMode) {
       // Initialize demo AI
-      const demoAI = new ZenalystAI([]) // Empty data for demo
+      const demoAI = new ZenalystAI()
       setZenalystAI(demoAI)
       setAIMessages([{
         type: 'ai',
