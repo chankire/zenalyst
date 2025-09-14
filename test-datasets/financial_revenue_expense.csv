@@ -1,0 +1,61 @@
+date,category,type,amount,department,description,account_code,budget_allocated,variance
+2024-01-01,Sales Revenue,Revenue,125000,Sales,Product Sales - Q1,REV001,120000,5000
+2024-01-01,Service Revenue,Revenue,45000,Services,Consulting Services,REV002,40000,5000
+2024-01-01,Salary Expense,Expense,85000,HR,Employee Salaries,EXP001,85000,0
+2024-01-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-01-01,Marketing Spend,Expense,18000,Marketing,Digital Advertising,EXP003,15000,-3000
+2024-02-01,Sales Revenue,Revenue,132000,Sales,Product Sales - Q1,REV001,120000,12000
+2024-02-01,Service Revenue,Revenue,48000,Services,Consulting Services,REV002,40000,8000
+2024-02-01,Salary Expense,Expense,85000,HR,Employee Salaries,EXP001,85000,0
+2024-02-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-02-01,Marketing Spend,Expense,16000,Marketing,Digital Advertising,EXP003,15000,-1000
+2024-03-01,Sales Revenue,Revenue,145000,Sales,Product Sales - Q1,REV001,120000,25000
+2024-03-01,Service Revenue,Revenue,52000,Services,Consulting Services,REV002,40000,12000
+2024-03-01,Salary Expense,Expense,88000,HR,Employee Salaries + Bonus,EXP001,85000,-3000
+2024-03-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-03-01,Marketing Spend,Expense,22000,Marketing,Conference + Digital Ads,EXP003,15000,-7000
+2024-04-01,Sales Revenue,Revenue,138000,Sales,Product Sales - Q2,REV001,140000,2000
+2024-04-01,Service Revenue,Revenue,49000,Services,Consulting Services,REV002,45000,4000
+2024-04-01,Salary Expense,Expense,90000,HR,Employee Salaries,EXP001,90000,0
+2024-04-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-04-01,Marketing Spend,Expense,19000,Marketing,Digital Advertising,EXP003,18000,-1000
+2024-05-01,Sales Revenue,Revenue,156000,Sales,Product Sales - Q2,REV001,140000,16000
+2024-05-01,Service Revenue,Revenue,55000,Services,Consulting Services,REV002,45000,10000
+2024-05-01,Salary Expense,Expense,90000,HR,Employee Salaries,EXP001,90000,0
+2024-05-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-05-01,Marketing Spend,Expense,25000,Marketing,Product Launch Campaign,EXP003,18000,-7000
+2024-06-01,Sales Revenue,Revenue,162000,Sales,Product Sales - Q2,REV001,140000,22000
+2024-06-01,Service Revenue,Revenue,58000,Services,Consulting Services,REV002,45000,13000
+2024-06-01,Salary Expense,Expense,92000,HR,Employee Salaries + Mid-year Bonus,EXP001,90000,-2000
+2024-06-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-06-01,Marketing Spend,Expense,20000,Marketing,Digital Advertising,EXP003,18000,-2000
+2024-07-01,Sales Revenue,Revenue,148000,Sales,Product Sales - Q3,REV001,150000,2000
+2024-07-01,Service Revenue,Revenue,53000,Services,Consulting Services,REV002,50000,3000
+2024-07-01,Salary Expense,Expense,92000,HR,Employee Salaries,EXP001,92000,0
+2024-07-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-07-01,Marketing Spend,Expense,17000,Marketing,Summer Campaign,EXP003,20000,3000
+2024-08-01,Sales Revenue,Revenue,175000,Sales,Product Sales - Q3,REV001,150000,25000
+2024-08-01,Service Revenue,Revenue,62000,Services,Consulting Services,REV002,50000,12000
+2024-08-01,Salary Expense,Expense,92000,HR,Employee Salaries,EXP001,92000,0
+2024-08-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-08-01,Marketing Spend,Expense,28000,Marketing,Back to School Campaign,EXP003,20000,-8000
+2024-09-01,Sales Revenue,Revenue,168000,Sales,Product Sales - Q3,REV001,150000,18000
+2024-09-01,Service Revenue,Revenue,59000,Services,Consulting Services,REV002,50000,9000
+2024-09-01,Salary Expense,Expense,95000,HR,Employee Salaries + Q3 Bonus,EXP001,92000,-3000
+2024-09-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-09-01,Marketing Spend,Expense,22000,Marketing,Digital Advertising,EXP003,20000,-2000
+2024-10-01,Sales Revenue,Revenue,185000,Sales,Product Sales - Q4,REV001,160000,25000
+2024-10-01,Service Revenue,Revenue,65000,Services,Consulting Services,REV002,55000,10000
+2024-10-01,Salary Expense,Expense,95000,HR,Employee Salaries,EXP001,95000,0
+2024-10-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-10-01,Marketing Spend,Expense,24000,Marketing,Holiday Prep Campaign,EXP003,25000,1000
+2024-11-01,Sales Revenue,Revenue,220000,Sales,Product Sales - Q4,REV001,160000,60000
+2024-11-01,Service Revenue,Revenue,72000,Services,Consulting Services,REV002,55000,17000
+2024-11-01,Salary Expense,Expense,95000,HR,Employee Salaries,EXP001,95000,0
+2024-11-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-11-01,Marketing Spend,Expense,35000,Marketing,Black Friday Campaign,EXP003,25000,-10000
+2024-12-01,Sales Revenue,Revenue,245000,Sales,Product Sales - Q4,REV001,160000,85000
+2024-12-01,Service Revenue,Revenue,68000,Services,Consulting Services,REV002,55000,13000
+2024-12-01,Salary Expense,Expense,110000,HR,Employee Salaries + Year-end Bonus,EXP001,95000,-15000
+2024-12-01,Office Rent,Expense,12000,Operations,Monthly Office Rent,EXP002,12000,0
+2024-12-01,Marketing Spend,Expense,30000,Marketing,Holiday Season Campaign,EXP003,25000,-5000

@@ -1,0 +1,82 @@
+[
+  {
+    "kpi_name": "Monthly Recurring Revenue",
+    "value": 125000,
+    "target": 120000,
+    "variance": 4.17,
+    "period": "2024-01",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "Customer Acquisition Cost",
+    "value": 85,
+    "target": 90,
+    "variance": -5.56,
+    "period": "2024-01",
+    "department": "Marketing"
+  },
+  {
+    "kpi_name": "Gross Margin %",
+    "value": 68.5,
+    "target": 70,
+    "variance": -2.14,
+    "period": "2024-01",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "Cash Flow",
+    "value": 45000,
+    "target": 40000,
+    "variance": 12.5,
+    "period": "2024-01",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "EBITDA",
+    "value": 28000,
+    "target": 25000,
+    "variance": 12,
+    "period": "2024-01",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "Monthly Recurring Revenue",
+    "value": 132000,
+    "target": 125000,
+    "variance": 5.6,
+    "period": "2024-02",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "Customer Acquisition Cost",
+    "value": 82,
+    "target": 85,
+    "variance": -3.53,
+    "period": "2024-02",
+    "department": "Marketing"
+  },
+  {
+    "kpi_name": "Gross Margin %",
+    "value": 71.2,
+    "target": 70,
+    "variance": 1.71,
+    "period": "2024-02",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "Cash Flow",
+    "value": 52000,
+    "target": 45000,
+    "variance": 15.56,
+    "period": "2024-02",
+    "department": "Finance"
+  },
+  {
+    "kpi_name": "EBITDA",
+    "value": 35000,
+    "target": 30000,
+    "variance": 16.67,
+    "period": "2024-02",
+    "department": "Finance"
+  }
+]

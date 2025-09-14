@@ -1,0 +1,21 @@
+campaign_id,campaign_name,channel,start_date,end_date,budget,impressions,clicks,conversions,cost_per_click,conversion_rate,revenue_generated,roas,target_audience,campaign_type,creative_format
+CAMP001,Summer Sale 2024,Google Ads,2024-06-01,2024-08-31,25000,850000,12500,450,2.00,3.60,67500,2.70,Young Adults 18-35,Seasonal,Display Banner
+CAMP002,Back to School,Facebook,2024-07-15,2024-09-15,18000,620000,8900,320,2.02,3.60,48000,2.67,Parents 25-45,Seasonal,Video Ad
+CAMP003,Product Launch - SmartWatch,Instagram,2024-05-01,2024-06-30,35000,450000,9800,680,3.57,6.94,136000,3.89,Tech Enthusiasts 20-40,Product Launch,Carousel
+CAMP004,Brand Awareness Q2,LinkedIn,2024-04-01,2024-06-30,22000,380000,4200,180,5.24,4.29,27000,1.23,Business Professionals,Brand Awareness,Sponsored Content
+CAMP005,Holiday Shopping,Google Ads,2023-11-01,2023-12-31,45000,1200000,18600,950,2.42,5.11,142500,3.17,General Audience 25-55,Seasonal,Shopping Ads
+CAMP006,Mobile App Downloads,TikTok,2024-01-15,2024-03-15,15000,750000,15800,1200,0.95,7.59,24000,1.60,Gen Z 16-24,App Promotion,Video Ad
+CAMP007,Email Newsletter Signup,Email Marketing,2024-01-01,2024-12-31,8000,250000,12500,2800,0.64,22.40,42000,5.25,Existing Customers,Retention,Newsletter
+CAMP008,Influencer Collaboration,YouTube,2024-03-01,2024-05-31,28000,520000,8900,420,3.15,4.72,63000,2.25,Lifestyle Enthusiasts,Influencer,Video Content
+CAMP009,Retargeting Campaign,Facebook,2024-02-01,2024-12-31,20000,180000,9200,580,2.17,6.30,87000,4.35,Website Visitors,Retargeting,Dynamic Ads
+CAMP010,Local Store Promotion,Google My Business,2024-01-01,2024-12-31,12000,95000,4800,240,2.50,5.00,36000,3.00,Local Customers,Local,Local Ads
+CAMP011,Content Marketing Blog,Organic Search,2024-01-01,2024-12-31,5000,320000,16000,800,0.31,5.00,120000,24.00,Content Readers,Content,Blog Posts
+CAMP012,Partnership Marketing,Affiliate Network,2024-01-01,2024-12-31,30000,280000,7800,580,3.85,7.44,87000,2.90,Partner Audience,Partnership,Various
+CAMP013,Podcast Sponsorship,Podcast Ads,2024-02-15,2024-08-15,18000,150000,2100,180,8.57,8.57,27000,1.50,Podcast Listeners,Audio,Sponsored Mention
+CAMP014,Webinar Series,Direct Marketing,2024-03-01,2024-11-30,25000,45000,3200,480,7.81,15.00,72000,2.88,B2B Decision Makers,Educational,Webinar
+CAMP015,Customer Referral Program,Word of Mouth,2024-01-01,2024-12-31,10000,80000,2400,360,4.17,15.00,54000,5.40,Existing Customers,Referral,Referral Bonus
+CAMP016,Trade Show Participation,Event Marketing,2024-05-15,2024-05-17,35000,12000,1800,120,19.44,6.67,18000,0.51,Industry Professionals,Event,Booth Display
+CAMP017,Social Media Contest,Instagram,2024-04-01,2024-04-30,8000,420000,21000,840,0.38,4.00,25200,3.15,Social Media Users,Engagement,Contest Post
+CAMP018,Customer Testimonial Campaign,Multiple Channels,2024-06-01,2024-08-31,15000,200000,6800,340,2.21,5.00,51000,3.40,Prospective Customers,Social Proof,Testimonial Video
+CAMP019,Flash Sale Weekend,Email + Social,2024-07-20,2024-07-22,5000,180000,14400,720,0.35,5.00,108000,21.60,Email Subscribers,Promotional,Flash Sale
+CAMP020,Black Friday Campaign,Multi-Channel,2023-11-24,2023-11-26,50000,2000000,45000,2250,1.11,5.00,337500,6.75,General Audience,Seasonal,Multi-Format

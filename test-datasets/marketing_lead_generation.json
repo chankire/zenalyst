@@ -1,0 +1,312 @@
+[
+  {
+    "lead_id": "LEAD001",
+    "source": "Google Ads",
+    "campaign_id": "CAMP001",
+    "date_generated": "2024-06-15",
+    "lead_score": 85,
+    "contact_info": {
+      "name": "Alex Rodriguez",
+      "email": "alex.rodriguez@company.com",
+      "phone": "+1-555-0123",
+      "company": "Tech Innovations Inc"
+    },
+    "demographics": {
+      "age": 32,
+      "location": "San Francisco, CA",
+      "industry": "Technology",
+      "company_size": "51-200 employees"
+    },
+    "engagement": {
+      "pages_visited": 8,
+      "time_on_site": "00:12:45",
+      "downloads": 2,
+      "form_submissions": 1,
+      "email_opens": 3,
+      "email_clicks": 2
+    },
+    "status": "Qualified",
+    "assigned_to": "Sarah Johnson",
+    "conversion_date": "2024-06-22",
+    "conversion_value": 1500
+  },
+  {
+    "lead_id": "LEAD002",
+    "source": "LinkedIn",
+    "campaign_id": "CAMP004",
+    "date_generated": "2024-05-20",
+    "lead_score": 72,
+    "contact_info": {
+      "name": "Maria Gonzalez",
+      "email": "m.gonzalez@businesscorp.com",
+      "phone": "+1-555-0456",
+      "company": "Business Solutions Corp"
+    },
+    "demographics": {
+      "age": 28,
+      "location": "Austin, TX",
+      "industry": "Consulting",
+      "company_size": "11-50 employees"
+    },
+    "engagement": {
+      "pages_visited": 12,
+      "time_on_site": "00:18:22",
+      "downloads": 3,
+      "form_submissions": 2,
+      "email_opens": 5,
+      "email_clicks": 4
+    },
+    "status": "Nurturing",
+    "assigned_to": "Michael Davis",
+    "conversion_date": null,
+    "conversion_value": null
+  },
+  {
+    "lead_id": "LEAD003",
+    "source": "Facebook",
+    "campaign_id": "CAMP002",
+    "date_generated": "2024-07-28",
+    "lead_score": 91,
+    "contact_info": {
+      "name": "David Kim",
+      "email": "david.kim@startupventures.com",
+      "phone": "+1-555-0789",
+      "company": "Startup Ventures"
+    },
+    "demographics": {
+      "age": 35,
+      "location": "Seattle, WA",
+      "industry": "Venture Capital",
+      "company_size": "201-500 employees"
+    },
+    "engagement": {
+      "pages_visited": 15,
+      "time_on_site": "00:25:17",
+      "downloads": 4,
+      "form_submissions": 3,
+      "email_opens": 7,
+      "email_clicks": 6
+    },
+    "status": "Converted",
+    "assigned_to": "Jennifer Williams",
+    "conversion_date": "2024-08-05",
+    "conversion_value": 2500
+  },
+  {
+    "lead_id": "LEAD004",
+    "source": "Organic Search",
+    "campaign_id": "CAMP011",
+    "date_generated": "2024-04-10",
+    "lead_score": 67,
+    "contact_info": {
+      "name": "Lisa Chen",
+      "email": "lisa.chen@manufacturingplus.com",
+      "phone": "+1-555-0321",
+      "company": "Manufacturing Plus"
+    },
+    "demographics": {
+      "age": 41,
+      "location": "Chicago, IL",
+      "industry": "Manufacturing",
+      "company_size": "501+ employees"
+    },
+    "engagement": {
+      "pages_visited": 6,
+      "time_on_site": "00:08:33",
+      "downloads": 1,
+      "form_submissions": 1,
+      "email_opens": 2,
+      "email_clicks": 1
+    },
+    "status": "Cold",
+    "assigned_to": "Robert Taylor",
+    "conversion_date": null,
+    "conversion_value": null
+  },
+  {
+    "lead_id": "LEAD005",
+    "source": "Email Campaign",
+    "campaign_id": "CAMP007",
+    "date_generated": "2024-08-03",
+    "lead_score": 88,
+    "contact_info": {
+      "name": "John Anderson",
+      "email": "j.anderson@retailgroup.com",
+      "phone": "+1-555-0654",
+      "company": "Retail Group LLC"
+    },
+    "demographics": {
+      "age": 39,
+      "location": "Miami, FL",
+      "industry": "Retail",
+      "company_size": "101-500 employees"
+    },
+    "engagement": {
+      "pages_visited": 10,
+      "time_on_site": "00:16:45",
+      "downloads": 3,
+      "form_submissions": 2,
+      "email_opens": 6,
+      "email_clicks": 5
+    },
+    "status": "Hot",
+    "assigned_to": "Amanda Martinez",
+    "conversion_date": null,
+    "conversion_value": null
+  },
+  {
+    "lead_id": "LEAD006",
+    "source": "Webinar",
+    "campaign_id": "CAMP014",
+    "date_generated": "2024-05-15",
+    "lead_score": 93,
+    "contact_info": {
+      "name": "Emily Thompson",
+      "email": "e.thompson@healthcaresolutions.org",
+      "phone": "+1-555-0987",
+      "company": "Healthcare Solutions"
+    },
+    "demographics": {
+      "age": 44,
+      "location": "Boston, MA",
+      "industry": "Healthcare",
+      "company_size": "501+ employees"
+    },
+    "engagement": {
+      "pages_visited": 18,
+      "time_on_site": "00:32:15",
+      "downloads": 5,
+      "form_submissions": 4,
+      "email_opens": 9,
+      "email_clicks": 8
+    },
+    "status": "Converted",
+    "assigned_to": "Christopher Lee",
+    "conversion_date": "2024-05-28",
+    "conversion_value": 3200
+  },
+  {
+    "lead_id": "LEAD007",
+    "source": "Instagram",
+    "campaign_id": "CAMP003",
+    "date_generated": "2024-06-02",
+    "lead_score": 76,
+    "contact_info": {
+      "name": "Michael Brown",
+      "email": "michael.brown@designstudio.com",
+      "phone": "+1-555-0147",
+      "company": "Creative Design Studio"
+    },
+    "demographics": {
+      "age": 29,
+      "location": "Los Angeles, CA",
+      "industry": "Design",
+      "company_size": "11-50 employees"
+    },
+    "engagement": {
+      "pages_visited": 9,
+      "time_on_site": "00:14:28",
+      "downloads": 2,
+      "form_submissions": 1,
+      "email_opens": 4,
+      "email_clicks": 3
+    },
+    "status": "Warm",
+    "assigned_to": "Daniel Wilson",
+    "conversion_date": null,
+    "conversion_value": null
+  },
+  {
+    "lead_id": "LEAD008",
+    "source": "Referral",
+    "campaign_id": "CAMP015",
+    "date_generated": "2024-07-12",
+    "lead_score": 89,
+    "contact_info": {
+      "name": "Sarah White",
+      "email": "sarah.white@financegroup.com",
+      "phone": "+1-555-0258",
+      "company": "Finance Group Inc"
+    },
+    "demographics": {
+      "age": 36,
+      "location": "New York, NY",
+      "industry": "Finance",
+      "company_size": "201-500 employees"
+    },
+    "engagement": {
+      "pages_visited": 13,
+      "time_on_site": "00:21:37",
+      "downloads": 4,
+      "form_submissions": 3,
+      "email_opens": 6,
+      "email_clicks": 5
+    },
+    "status": "Qualified",
+    "assigned_to": "Jessica Garcia",
+    "conversion_date": "2024-07-25",
+    "conversion_value": 1800
+  },
+  {
+    "lead_id": "LEAD009",
+    "source": "TikTok",
+    "campaign_id": "CAMP006",
+    "date_generated": "2024-02-18",
+    "lead_score": 64,
+    "contact_info": {
+      "name": "Kevin Miller",
+      "email": "kevin.miller@mobilestartup.com",
+      "phone": "+1-555-0369",
+      "company": "Mobile Startup Co"
+    },
+    "demographics": {
+      "age": 24,
+      "location": "Portland, OR",
+      "industry": "Mobile Apps",
+      "company_size": "1-10 employees"
+    },
+    "engagement": {
+      "pages_visited": 5,
+      "time_on_site": "00:07:12",
+      "downloads": 1,
+      "form_submissions": 1,
+      "email_opens": 2,
+      "email_clicks": 1
+    },
+    "status": "New",
+    "assigned_to": "Brandon Johnson",
+    "conversion_date": null,
+    "conversion_value": null
+  },
+  {
+    "lead_id": "LEAD010",
+    "source": "Trade Show",
+    "campaign_id": "CAMP016",
+    "date_generated": "2024-05-16",
+    "lead_score": 81,
+    "contact_info": {
+      "name": "Rachel Davis",
+      "email": "rachel.davis@industrialtech.com",
+      "phone": "+1-555-0741",
+      "company": "Industrial Tech Solutions"
+    },
+    "demographics": {
+      "age": 42,
+      "location": "Houston, TX",
+      "industry": "Industrial",
+      "company_size": "501+ employees"
+    },
+    "engagement": {
+      "pages_visited": 11,
+      "time_on_site": "00:19:44",
+      "downloads": 3,
+      "form_submissions": 2,
+      "email_opens": 5,
+      "email_clicks": 4
+    },
+    "status": "Warm",
+    "assigned_to": "Tyler Martinez",
+    "conversion_date": null,
+    "conversion_value": null
+  }
+]

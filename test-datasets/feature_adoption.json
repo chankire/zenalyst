@@ -1,0 +1,47 @@
+[
+  {
+    "feature_name": "AI Chat",
+    "release_date": "2024-01-01",
+    "total_users": 1000,
+    "active_users": 650,
+    "adoption_rate": 65.0,
+    "retention_7d": 45.2,
+    "retention_30d": 32.1
+  },
+  {
+    "feature_name": "Knowledge Graph",
+    "release_date": "2024-02-01",
+    "total_users": 1200,
+    "active_users": 480,
+    "adoption_rate": 40.0,
+    "retention_7d": 35.8,
+    "retention_30d": 28.3
+  },
+  {
+    "feature_name": "Multi-Persona Insights",
+    "release_date": "2024-03-01",
+    "total_users": 1350,
+    "active_users": 810,
+    "adoption_rate": 60.0,
+    "retention_7d": 52.4,
+    "retention_30d": 41.7
+  },
+  {
+    "feature_name": "Advanced Filters",
+    "release_date": "2024-01-15",
+    "total_users": 1000,
+    "active_users": 750,
+    "adoption_rate": 75.0,
+    "retention_7d": 68.3,
+    "retention_30d": 58.9
+  },
+  {
+    "feature_name": "Export Dashboard",
+    "release_date": "2023-12-01",
+    "total_users": 950,
+    "active_users": 855,
+    "adoption_rate": 90.0,
+    "retention_7d": 82.1,
+    "retention_30d": 74.5
+  }
+]

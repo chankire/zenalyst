@@ -12,10 +12,12 @@ import {
   Zap,
   Loader2,
   Sparkles,
-  Activity
+  Activity,
+  Check
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { AdvancedAnalytics } from '@/lib/analytics'
+import * as XLSX from 'xlsx'
 
 interface Project {
   id: string
@@ -36,6 +38,9 @@ const ProjectsPage = () => {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysisProgress, setAnalysisProgress] = useState('')
+  const [excelSheets, setExcelSheets] = useState<{name: string, data: any[]}[]>([])
+  const [selectedSheets, setSelectedSheets] = useState<Set<string>>(new Set())
+  const [showSheetSelection, setShowSheetSelection] = useState(false)
   const [projects] = useState<Project[]>([
     {
       id: '1',
@@ -78,13 +83,15 @@ const ProjectsPage = () => {
       const reader = new FileReader()
       
       reader.onload = (e) => {
-        const content = e.target?.result as string
+        const result = e.target?.result
         
         try {
           if (file.name.endsWith('.json')) {
+            const content = result as string
             const data = JSON.parse(content)
             resolve(Array.isArray(data) ? data : [data])
           } else if (file.name.endsWith('.csv')) {
+            const content = result as string
             // Simple CSV parser
             const lines = content.split('\n').filter(line => line.trim())
             const headers = lines[0].split(',').map(h => h.trim())
@@ -99,6 +106,27 @@ const ProjectsPage = () => {
               return obj
             })
             resolve(data)
+          } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+            const arrayBuffer = result as ArrayBuffer
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+            
+            // Extract all sheets
+            const sheets = workbook.SheetNames.map(sheetName => {
+              const worksheet = workbook.Sheets[sheetName]
+              const data = XLSX.utils.sheet_to_json(worksheet)
+              return { name: sheetName, data }
+            })
+            
+            if (sheets.length === 1) {
+              // Single sheet - proceed directly
+              resolve(sheets[0].data)
+            } else {
+              // Multiple sheets - show sheet selection
+              setExcelSheets(sheets)
+              setSelectedSheets(new Set(sheets.map(s => s.name))) // Select all by default
+              setShowSheetSelection(true)
+              resolve([]) // Temporary empty resolution
+            }
           } else {
             reject(new Error('Unsupported file format'))
           }
@@ -108,9 +136,69 @@ const ProjectsPage = () => {
       }
       
       reader.onerror = () => reject(new Error('Failed to read file'))
-      reader.readAsText(file)
+      
+      // Read as ArrayBuffer for Excel files, text for others
+      if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        reader.readAsArrayBuffer(file)
+      } else {
+        reader.readAsText(file)
+      }
     })
   }, [])
+
+  const toggleSheetSelection = (sheetName: string) => {
+    const newSelected = new Set(selectedSheets)
+    if (newSelected.has(sheetName)) {
+      newSelected.delete(sheetName)
+    } else {
+      newSelected.add(sheetName)
+    }
+    setSelectedSheets(newSelected)
+  }
+
+  const handleConfirmSheetSelection = async () => {
+    if (selectedSheets.size === 0) {
+      alert('Please select at least one sheet')
+      return
+    }
+    
+    setShowSheetSelection(false)
+    setIsAnalyzing(true)
+    setAnalysisProgress('Processing selected sheets...')
+    
+    try {
+      // Combine data from selected sheets
+      const selectedData = excelSheets
+        .filter(sheet => selectedSheets.has(sheet.name))
+        .flatMap(sheet => sheet.data.map(row => ({ ...row, _sheet: sheet.name })))
+      
+      setAnalysisProgress('Initializing advanced analytics...')
+      const analytics = new AdvancedAnalytics()
+      
+      setAnalysisProgress('Performing instant analysis...')
+      const analysisResults = await analytics.performInstantAnalysis(selectedData)
+      
+      // Store analysis results in localStorage for dashboard to use
+      localStorage.setItem('zenalyst_analysis_results', JSON.stringify(analysisResults))
+      localStorage.setItem('zenalyst_raw_data', JSON.stringify(selectedData))
+      localStorage.setItem('zenalyst_file_name', selectedFile?.name || 'excel-data.xlsx')
+      localStorage.setItem('zenalyst_selected_sheets', JSON.stringify(Array.from(selectedSheets)))
+      
+      setAnalysisProgress('Complete! Loading dashboard...')
+      
+      // Navigate to dashboard with uploaded data
+      setShowUploadModal(false)
+      setIsAnalyzing(false)
+      navigate('/dashboard?uploaded=true')
+    } catch (error) {
+      console.error('Analysis failed:', error)
+      setIsAnalyzing(false)
+      setAnalysisProgress('')
+      // Navigate to demo dashboard on error
+      setShowUploadModal(false)
+      navigate('/dashboard?demo=true')
+    }
+  }
 
   const handleCreateDashboard = async () => {
     if (selectedFile) {
@@ -438,6 +526,101 @@ const ProjectsPage = () => {
                       <span>Start Analysis</span>
                     </>
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Excel Sheet Selection Modal */}
+      {showSheetSelection && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card border rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-border">
+              <h2 className="text-2xl font-bold mb-2">Select Excel Sheets</h2>
+              <p className="text-muted-foreground">
+                Your Excel file contains multiple sheets. Choose which ones to include in your analysis.
+              </p>
+            </div>
+            
+            <div className="p-6">
+              <div className="space-y-3 mb-6">
+                {excelSheets.map((sheet, index) => (
+                  <div key={index} className="border border-border rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <button
+                          onClick={() => toggleSheetSelection(sheet.name)}
+                          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
+                            selectedSheets.has(sheet.name)
+                              ? 'bg-primary border-primary text-white'
+                              : 'border-border hover:border-primary'
+                          }`}
+                        >
+                          {selectedSheets.has(sheet.name) && (
+                            <Check className="w-4 h-4" />
+                          )}
+                        </button>
+                        <div>
+                          <h3 className="font-semibold">{sheet.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {sheet.data.length} rows • {Object.keys(sheet.data[0] || {}).length} columns
+                          </p>
+                        </div>
+                      </div>
+                      <FileSpreadsheet className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    
+                    {/* Preview of first few rows */}
+                    {sheet.data.length > 0 && (
+                      <div className="mt-3 text-xs text-muted-foreground">
+                        <p className="mb-1 font-medium">Column headers:</p>
+                        <p className="truncate">
+                          {Object.keys(sheet.data[0]).slice(0, 5).join(', ')}
+                          {Object.keys(sheet.data[0]).length > 5 && ` +${Object.keys(sheet.data[0]).length - 5} more`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Quick Selection Buttons */}
+              <div className="flex space-x-3 mb-6">
+                <button
+                  onClick={() => setSelectedSheets(new Set(excelSheets.map(s => s.name)))}
+                  className="px-3 py-2 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  onClick={() => setSelectedSheets(new Set())}
+                  className="px-3 py-2 text-sm border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  Select None
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowSheetSelection(false)
+                    setExcelSheets([])
+                    setSelectedSheets(new Set())
+                  }}
+                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmSheetSelection}
+                  disabled={selectedSheets.size === 0}
+                  className="flex-1 px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  <Activity className="w-4 h-4" />
+                  <span>Analyze Selected Sheets ({selectedSheets.size})</span>
                 </button>
               </div>
             </div>

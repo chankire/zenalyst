@@ -1,0 +1,7 @@
+user_id,date,feature,action,duration,device,user_segment
+USER001,2024-01-15,Dashboard,view,180,desktop,power_user
+USER001,2024-01-15,Analytics,click,45,desktop,power_user
+USER002,2024-01-15,Profile,edit,120,mobile,regular
+USER003,2024-01-16,Search,query,30,tablet,new_user
+USER004,2024-01-16,Dashboard,view,240,desktop,power_user
+USER005,2024-01-17,Export,download,60,desktop,regular

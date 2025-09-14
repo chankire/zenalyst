@@ -1,0 +1,11 @@
+date,department,metric,value,unit,target,efficiency
+2024-01-01,Manufacturing,Production Output,1250,units,1200,104.17
+2024-01-01,Manufacturing,Defect Rate,2.3,%,3.0,123.33
+2024-01-01,Logistics,Delivery Time,2.1,days,2.5,116.0
+2024-01-01,Customer Service,Response Time,4.5,hours,6.0,125.0
+2024-01-01,IT,System Uptime,99.8,%,99.5,100.3
+2024-02-01,Manufacturing,Production Output,1320,units,1250,105.6
+2024-02-01,Manufacturing,Defect Rate,1.9,%,3.0,136.84
+2024-02-01,Logistics,Delivery Time,1.8,days,2.5,128.0
+2024-02-01,Customer Service,Response Time,3.2,hours,6.0,146.67
+2024-02-01,IT,System Uptime,99.9,%,99.5,100.4

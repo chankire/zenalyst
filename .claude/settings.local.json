@@ -21,7 +21,10 @@
       "Bash(npm run preview:*)",
       "Bash(vercel:*)",
       "WebFetch(domain:zenalyst-h71a974u8-charles-projects-446d4486.vercel.app)",
-      "WebFetch(domain:zenalyst.vercel.app)"
+      "WebFetch(domain:zenalyst.vercel.app)",
+      "Bash(python:*)",
+      "Bash(dir \"C:\\Users\\chank\\claude-code-projects\\zenalyst\\test-datasets\")",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

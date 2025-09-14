@@ -1,0 +1,51 @@
+order_id,customer_id,product_name,category,quantity,unit_price,total_amount,order_date,customer_segment,payment_method,shipping_cost,discount_applied
+ORD001,CUST001,Wireless Bluetooth Headphones,Electronics,2,89.99,179.98,2024-01-15,Premium,Credit Card,12.99,10
+ORD002,CUST002,Organic Cotton T-Shirt,Clothing,3,24.99,74.97,2024-01-15,Regular,PayPal,8.99,0
+ORD003,CUST003,Smart Fitness Tracker,Electronics,1,159.99,159.99,2024-01-16,Premium,Credit Card,0,15
+ORD004,CUST004,Yoga Mat Premium,Sports,1,49.99,49.99,2024-01-16,Regular,Debit Card,9.99,0
+ORD005,CUST005,Coffee Maker Deluxe,Home & Kitchen,1,129.99,129.99,2024-01-17,Premium,Credit Card,15.99,20
+ORD006,CUST006,Running Shoes Men,Footwear,1,79.99,79.99,2024-01-17,Regular,Credit Card,12.99,0
+ORD007,CUST007,Skincare Set Natural,Beauty,2,34.99,69.98,2024-01-18,Premium,PayPal,7.99,5
+ORD008,CUST008,Gaming Mouse RGB,Electronics,1,45.99,45.99,2024-01-18,Regular,Credit Card,8.99,0
+ORD009,CUST009,Protein Powder Vanilla,Health,2,39.99,79.98,2024-01-19,Regular,Debit Card,11.99,0
+ORD010,CUST010,Desk Lamp LED,Home & Office,1,55.99,55.99,2024-01-19,Premium,Credit Card,9.99,8
+ORD011,CUST011,Winter Jacket Waterproof,Clothing,1,129.99,129.99,2024-01-20,Premium,Credit Card,14.99,25
+ORD012,CUST012,Phone Case Protective,Accessories,3,19.99,59.97,2024-01-20,Regular,PayPal,6.99,0
+ORD013,CUST013,Kitchen Knife Set,Home & Kitchen,1,89.99,89.99,2024-01-21,Premium,Credit Card,12.99,12
+ORD014,CUST014,Workout Resistance Bands,Sports,2,22.99,45.98,2024-01-21,Regular,Debit Card,8.99,0
+ORD015,CUST015,Essential Oils Set,Beauty,1,64.99,64.99,2024-01-22,Premium,Credit Card,9.99,10
+ORD016,CUST016,Bluetooth Speaker Portable,Electronics,1,69.99,69.99,2024-01-22,Regular,PayPal,10.99,0
+ORD017,CUST017,Memory Foam Pillow,Home & Bedroom,2,35.99,71.98,2024-01-23,Regular,Credit Card,11.99,0
+ORD018,CUST018,Smartwatch Fitness,Electronics,1,199.99,199.99,2024-01-23,Premium,Credit Card,0,30
+ORD019,CUST019,Backpack Travel,Accessories,1,75.99,75.99,2024-01-24,Regular,Debit Card,12.99,0
+ORD020,CUST020,Electric Toothbrush,Personal Care,1,89.99,89.99,2024-01-24,Premium,Credit Card,8.99,15
+ORD021,CUST021,Air Purifier HEPA,Home & Kitchen,1,179.99,179.99,2024-01-25,Premium,Credit Card,19.99,35
+ORD022,CUST022,Sunglasses Polarized,Accessories,2,49.99,99.98,2024-01-25,Regular,PayPal,9.99,0
+ORD023,CUST023,Protein Bars Mixed,Health,4,12.99,51.96,2024-01-26,Regular,Credit Card,8.99,0
+ORD024,CUST024,Standing Desk Converter,Home & Office,1,149.99,149.99,2024-01-26,Premium,Credit Card,24.99,20
+ORD025,CUST025,Face Moisturizer SPF,Beauty,3,29.99,89.97,2024-01-27,Regular,Debit Card,9.99,0
+ORD026,CUST026,Gaming Keyboard Mechanical,Electronics,1,99.99,99.99,2024-01-27,Premium,Credit Card,12.99,18
+ORD027,CUST027,Insulated Water Bottle,Sports,2,24.99,49.98,2024-01-28,Regular,PayPal,7.99,0
+ORD028,CUST028,Aromatherapy Diffuser,Home & Wellness,1,45.99,45.99,2024-01-28,Regular,Credit Card,9.99,0
+ORD029,CUST029,Wireless Charger Fast,Electronics,1,34.99,34.99,2024-01-29,Regular,Debit Card,6.99,0
+ORD030,CUST030,Premium Mattress Topper,Home & Bedroom,1,159.99,159.99,2024-01-29,Premium,Credit Card,29.99,25
+ORD031,CUST031,Trail Running Shoes,Footwear,1,119.99,119.99,2024-01-30,Premium,Credit Card,14.99,22
+ORD032,CUST032,Vitamin D Supplements,Health,2,19.99,39.98,2024-01-30,Regular,PayPal,7.99,0
+ORD033,CUST033,Laptop Stand Adjustable,Home & Office,1,39.99,39.99,2024-01-31,Regular,Credit Card,8.99,0
+ORD034,CUST034,Silk Pillowcase Set,Home & Bedroom,2,44.99,89.98,2024-01-31,Premium,Credit Card,11.99,8
+ORD035,CUST035,Portable Power Bank,Electronics,1,29.99,29.99,2024-02-01,Regular,Debit Card,6.99,0
+ORD036,CUST036,Organic Green Tea,Food & Beverages,3,16.99,50.97,2024-02-01,Regular,PayPal,8.99,0
+ORD037,CUST037,Noise Cancelling Earbuds,Electronics,1,149.99,149.99,2024-02-02,Premium,Credit Card,0,28
+ORD038,CUST038,Ceramic Cookware Set,Home & Kitchen,1,199.99,199.99,2024-02-02,Premium,Credit Card,24.99,40
+ORD039,CUST039,Resistance Loop Bands,Sports,3,14.99,44.97,2024-02-03,Regular,Credit Card,7.99,0
+ORD040,CUST040,Smart Home Speaker,Electronics,1,79.99,79.99,2024-02-03,Regular,PayPal,11.99,0
+ORD041,CUST041,Hiking Backpack 40L,Outdoor,1,89.99,89.99,2024-02-04,Premium,Credit Card,15.99,12
+ORD042,CUST042,Natural Deodorant,Personal Care,4,8.99,35.96,2024-02-04,Regular,Debit Card,6.99,0
+ORD043,CUST043,Blue Light Glasses,Accessories,1,39.99,39.99,2024-02-05,Regular,Credit Card,7.99,0
+ORD044,CUST044,Electric Kettle Smart,Home & Kitchen,1,69.99,69.99,2024-02-05,Premium,Credit Card,11.99,10
+ORD045,CUST045,Massage Gun Portable,Sports,1,129.99,129.99,2024-02-06,Premium,Credit Card,14.99,20
+ORD046,CUST046,Organic Honey Raw,Food & Beverages,2,24.99,49.98,2024-02-06,Regular,PayPal,8.99,0
+ORD047,CUST047,Webcam HD 1080p,Electronics,1,59.99,59.99,2024-02-07,Regular,Credit Card,9.99,0
+ORD048,CUST048,Bamboo Cutting Board,Home & Kitchen,1,34.99,34.99,2024-02-07,Regular,Debit Card,8.99,0
+ORD049,CUST049,Premium Hair Serum,Beauty,2,49.99,99.98,2024-02-08,Premium,Credit Card,10.99,15
+ORD050,CUST050,Fitness Resistance Tubes,Sports,1,19.99,19.99,2024-02-08,Regular,PayPal,6.99,0

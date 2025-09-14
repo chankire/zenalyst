@@ -1,0 +1,42 @@
+[
+  {
+    "process_name": "Order Processing",
+    "current_time": 2.5,
+    "target_time": 3.0,
+    "efficiency": 116.67,
+    "cost_per_unit": 12.5,
+    "department": "Operations"
+  },
+  {
+    "process_name": "Inventory Management",
+    "current_time": 1.2,
+    "target_time": 1.5,
+    "efficiency": 120.0,
+    "cost_per_unit": 8.75,
+    "department": "Warehouse"
+  },
+  {
+    "process_name": "Quality Control",
+    "current_time": 0.8,
+    "target_time": 1.0,
+    "efficiency": 125.0,
+    "cost_per_unit": 15.25,
+    "department": "QA"
+  },
+  {
+    "process_name": "Customer Onboarding",
+    "current_time": 4.5,
+    "target_time": 5.0,
+    "efficiency": 111.11,
+    "cost_per_unit": 25.0,
+    "department": "Customer Success"
+  },
+  {
+    "process_name": "Invoice Processing",
+    "current_time": 1.8,
+    "target_time": 2.0,
+    "efficiency": 110.0,
+    "cost_per_unit": 6.5,
+    "department": "Finance"
+  }
+]
