@@ -41,6 +41,9 @@ import {
 import { AnalysisResult } from '@/lib/analytics'
 import { ZenalystAI } from '@/lib/zenalyst-ai'
 import KnowledgeGraph from '@/components/charts/KnowledgeGraph'
+import AdvancedVisualizations from '@/components/charts/AdvancedVisualizations'
+import ExportSystem from '@/components/export/ExportSystem'
+import RealTimeDashboard from '@/components/realtime/RealTimeDashboard'
 
 const DashboardPage = () => {
   const [searchParams] = useSearchParams()
@@ -743,7 +746,39 @@ const DashboardPage = () => {
                 </div>
               </div>
             </div>
+
+            {/* Advanced Statistical Visualizations */}
+            {analysisResults && (analysisResults.dataQuality || analysisResults.confidenceIntervals || analysisResults.hypothesisTests) && (
+              <div className="mb-8">
+                <div className="p-6 bg-card border rounded-xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-1">Advanced Analytics</h3>
+                      <p className="text-sm text-muted-foreground">Enterprise-grade statistical visualizations</p>
+                    </div>
+                    <TrendIcon className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <AdvancedVisualizations
+                    data={rawData}
+                    correlations={analysisResults.correlations}
+                    confidenceIntervals={analysisResults.confidenceIntervals}
+                    hypothesisTests={analysisResults.hypothesisTests}
+                  />
+                </div>
+              </div>
+            )}
           </>
+        )}
+
+        {/* Real-time Analytics */}
+        {(isDemoMode || analysisResults) && (
+          <div className="mb-8">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold">Live Analytics Stream</h2>
+              <p className="text-muted-foreground">Real-time metrics, alerts, and automated insights</p>
+            </div>
+            <RealTimeDashboard />
+          </div>
         )}
 
         {/* Cognitive Insights Panel */}
@@ -1048,6 +1083,17 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Export and Reporting System */}
+      {analysisResults && rawData.length > 0 && (
+        <div className="mt-8">
+          <ExportSystem
+            analysisResults={analysisResults}
+            rawData={rawData}
+            fileName={fileName}
+          />
         </div>
       )}
     </div>

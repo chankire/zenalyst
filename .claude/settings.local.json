@@ -24,7 +24,8 @@
       "WebFetch(domain:zenalyst.vercel.app)",
       "Bash(python:*)",
       "Bash(dir \"C:\\Users\\chank\\claude-code-projects\\zenalyst\\test-datasets\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm test)"
     ],
     "deny": [],
     "ask": []

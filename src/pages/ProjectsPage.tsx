@@ -33,6 +33,8 @@ const ProjectsPage = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [newProjectName, setNewProjectName] = useState('')
+  const [newProjectDescription, setNewProjectDescription] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
@@ -41,7 +43,7 @@ const ProjectsPage = () => {
   const [excelSheets, setExcelSheets] = useState<{name: string, data: any[]}[]>([])
   const [selectedSheets, setSelectedSheets] = useState<Set<string>>(new Set())
   const [showSheetSelection, setShowSheetSelection] = useState(false)
-  const [projects] = useState<Project[]>([
+  const [projects, setProjects] = useState<Project[]>([
     {
       id: '1',
       name: 'Sales Analytics Q4',
@@ -645,6 +647,8 @@ const ProjectsPage = () => {
                   <label className="block text-sm font-medium mb-2">Project Name</label>
                   <input
                     type="text"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
                     className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     placeholder="e.g., Marketing Analytics Q1"
                   />
@@ -653,6 +657,8 @@ const ProjectsPage = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Description</label>
                   <textarea
+                    value={newProjectDescription}
+                    onChange={(e) => setNewProjectDescription(e.target.value)}
                     className="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none"
                     rows={3}
                     placeholder="Brief description of your analytics project..."
@@ -668,8 +674,25 @@ const ProjectsPage = () => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all"
+                  onClick={() => {
+                    if (newProjectName.trim()) {
+                      const newProject: Project = {
+                        id: `project-${Date.now()}`,
+                        name: newProjectName.trim(),
+                        description: newProjectDescription.trim(),
+                        status: 'In Progress',
+                        lastModified: new Date().toLocaleDateString(),
+                        dataPoints: Math.floor(Math.random() * 10000) + 1000,
+                        insights: Math.floor(Math.random() * 50) + 10
+                      }
+                      setProjects(prev => [newProject, ...prev])
+                      setNewProjectName('')
+                      setNewProjectDescription('')
+                      setShowCreateModal(false)
+                    }
+                  }}
+                  disabled={!newProjectName.trim()}
+                  className="flex-1 px-4 py-2 gradient-primary text-white rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Create Project
                 </button>

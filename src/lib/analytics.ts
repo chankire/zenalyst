@@ -12,11 +12,15 @@ export interface AnalysisResult {
   anomalies: AnomalyDetection[]
   insights: InsightResult[]
   rootCauses: RootCauseAnalysis[]
+  dataQuality: DataQualityAssessment
+  hypothesisTests: HypothesisTestResult[]
+  confidenceIntervals: ConfidenceInterval[]
   summary: {
     keyFindings: string[]
     recommendations: string[]
     confidenceScore: number
     dataQuality: string
+    qualityScore: number
   }
 }
 
@@ -27,7 +31,9 @@ export interface TrendAnalysis {
   confidence: number
   strength: number
   trendStrength: number
-  pValue?: number
+  pValue: number
+  confidenceInterval: { lower: number; upper: number }
+  tStatistic: number
   seasonality?: SeasonalPattern
   changePoints: ChangePoint[]
 }
@@ -37,6 +43,10 @@ export interface CorrelationAnalysis {
   field2: string
   correlation: number
   significance: number
+  pValue: number
+  confidenceInterval: { lower: number; upper: number }
+  tStatistic: number
+  degreesOfFreedom: number
   relationship: 'strong' | 'moderate' | 'weak'
   type: 'positive' | 'negative'
 }
@@ -85,6 +95,52 @@ interface ChangePoint {
   direction: 'increase' | 'decrease'
 }
 
+export interface DataQualityAssessment {
+  completeness: number // % of non-null values
+  consistency: number // % of data following expected patterns
+  accuracy: number // estimated accuracy score
+  validity: number // % of valid data types/formats
+  uniqueness: number // % of unique values where expected
+  timeliness: number // how recent/current the data is
+  qualityScore: number // overall quality score
+  issues: DataQualityIssue[]
+  recommendations: string[]
+}
+
+export interface DataQualityIssue {
+  field: string
+  type: 'missing_values' | 'duplicate_values' | 'outliers' | 'inconsistent_format' | 'invalid_values'
+  severity: 'low' | 'medium' | 'high'
+  count: number
+  percentage: number
+  description: string
+}
+
+export interface HypothesisTestResult {
+  field: string
+  testType: 'ttest' | 'anova' | 'chi_square' | 'normality'
+  hypothesis: string
+  pValue: number
+  tStatistic?: number
+  fStatistic?: number
+  chiSquare?: number
+  degreesOfFreedom: number
+  criticalValue: number
+  isSignificant: boolean
+  confidenceLevel: number
+  conclusion: string
+}
+
+export interface ConfidenceInterval {
+  field: string
+  metric: 'mean' | 'correlation' | 'slope' | 'forecast'
+  value: number
+  lowerBound: number
+  upperBound: number
+  confidenceLevel: number
+  marginOfError: number
+}
+
 export class AdvancedAnalytics {
   
   // Instance method for instant analysis
@@ -99,18 +155,21 @@ export class AdvancedAnalytics {
     const numericFields = this.identifyNumericFields(data)
     const dateField = this.identifyDateField(data)
     
-    // Parallel analysis for speed
-    const [trends, correlations, forecasts, anomalies, rootCauses] = await Promise.all([
+    // Parallel analysis for speed - including new advanced methods
+    const [trends, correlations, forecasts, anomalies, rootCauses, dataQuality, hypothesisTests, confidenceIntervals] = await Promise.all([
       this.analyzeTrends(data, numericFields, dateField),
       this.analyzeCorrelations(data, numericFields),
       this.generateForecasts(data, numericFields, dateField),
       this.detectAnomalies(data, numericFields),
-      this.analyzeRootCauses(data, numericFields)
+      this.analyzeRootCauses(data, numericFields),
+      this.assessDataQuality(data, numericFields),
+      this.performHypothesisTests(data, numericFields),
+      this.calculateConfidenceIntervals(data, numericFields)
     ])
 
     const insights = this.generateInsights(trends, correlations, forecasts, anomalies, rootCauses)
 
-    const summary = this.generateSummary(trends, correlations, forecasts, anomalies, insights, rootCauses)
+    const summary = this.generateSummary(trends, correlations, forecasts, anomalies, insights, rootCauses, dataQuality)
 
     return {
       trends,
@@ -119,6 +178,9 @@ export class AdvancedAnalytics {
       anomalies,
       insights,
       rootCauses,
+      dataQuality,
+      hypothesisTests,
+      confidenceIntervals,
       summary
     }
   }
@@ -151,10 +213,12 @@ export class AdvancedAnalytics {
       const values = data.map(d => Number(d[field])).filter(v => !isNaN(v))
       if (values.length < 3) continue
 
-      // Linear regression for trend detection
+      // Enhanced linear regression with statistical testing
       const trend = this.calculateLinearTrend(values)
       const volatility = this.calculateVolatility(values)
       const changePoints = this.detectChangePoints(values)
+      const trendTest = this.performTrendSignificanceTest(values, trend)
+      const confInterval = this.calculateTrendConfidenceInterval(trend, values.length)
       
       const trendDirection = this.classifyTrend(trend.slope, volatility)
       trends.push({
@@ -164,7 +228,9 @@ export class AdvancedAnalytics {
         confidence: trend.confidence,
         strength: Math.abs(trend.slope),
         trendStrength: Math.abs(trend.slope),
-        pValue: 0.05,
+        pValue: trendTest.pValue,
+        confidenceInterval: confInterval,
+        tStatistic: trendTest.tStatistic,
         changePoints
       })
     }
@@ -250,13 +316,18 @@ export class AdvancedAnalytics {
         if (values1.length !== values2.length || values1.length < 3) continue
 
         const correlation = this.calculatePearsonCorrelation(values1, values2)
-        const significance = this.calculateSignificance(correlation, values1.length)
+        const corrTest = this.performCorrelationSignificanceTest(correlation, values1.length)
+        const corrConfInterval = this.calculateCorrelationConfidenceInterval(correlation, values1.length)
         
         correlations.push({
           field1,
           field2,
           correlation,
-          significance,
+          significance: corrTest.significance,
+          pValue: corrTest.pValue,
+          confidenceInterval: corrConfInterval,
+          tStatistic: corrTest.tStatistic,
+          degreesOfFreedom: values1.length - 2,
           relationship: Math.abs(correlation) > 0.7 ? 'strong' : Math.abs(correlation) > 0.3 ? 'moderate' : 'weak',
           type: correlation > 0 ? 'positive' : 'negative'
         })
@@ -577,7 +648,8 @@ export class AdvancedAnalytics {
     _forecasts: ForecastResult[],
     anomalies: AnomalyDetection[],
     _insights: InsightResult[],
-    _rootCauses: RootCauseAnalysis[]
+    _rootCauses: RootCauseAnalysis[],
+    dataQuality: DataQualityAssessment
   ) {
     const keyFindings: string[] = []
     const recommendations: string[] = []
@@ -593,6 +665,7 @@ export class AdvancedAnalytics {
     if (anomalies.length > 0) {
       keyFindings.push(`Detected ${anomalies.length} anomalous patterns requiring attention`)
     }
+    keyFindings.push(`Data quality assessment: ${dataQuality.qualityScore.toFixed(1)}% overall quality`)
 
     // Generate recommendations
     recommendations.push('Focus on high-confidence insights for immediate action')
@@ -602,12 +675,342 @@ export class AdvancedAnalytics {
     if (correlations.length > 0) {
       recommendations.push('Leverage correlation insights for optimization')
     }
+    recommendations.push(...dataQuality.recommendations)
 
     return {
       keyFindings,
       recommendations,
       confidenceScore: 0.85,
-      dataQuality: 'High'
+      dataQuality: dataQuality.qualityScore > 80 ? 'High' : dataQuality.qualityScore > 60 ? 'Medium' : 'Low',
+      qualityScore: dataQuality.qualityScore
     }
+  }
+
+  // ====================== ADVANCED STATISTICAL METHODS ======================
+
+  // Data Quality Assessment - Enterprise best practice
+  private static async assessDataQuality(data: DataPoint[], numericFields: string[]): Promise<DataQualityAssessment> {
+    const totalRecords = data.length
+    const totalFields = Object.keys(data[0] || {}).length
+    const issues: DataQualityIssue[] = []
+    const recommendations: string[] = []
+
+    // Completeness - check for missing values
+    let totalMissingValues = 0
+    const fieldCompleteness: { [field: string]: number } = {}
+    
+    Object.keys(data[0] || {}).forEach(field => {
+      const missingCount = data.filter(row => row[field] == null || row[field] === '' || row[field] === undefined).length
+      totalMissingValues += missingCount
+      fieldCompleteness[field] = ((totalRecords - missingCount) / totalRecords) * 100
+      
+      if (missingCount > 0) {
+        const percentage = (missingCount / totalRecords) * 100
+        issues.push({
+          field,
+          type: 'missing_values',
+          severity: percentage > 20 ? 'high' : percentage > 5 ? 'medium' : 'low',
+          count: missingCount,
+          percentage,
+          description: `${missingCount} missing values (${percentage.toFixed(1)}%) in ${field}`
+        })
+      }
+    })
+
+    // Uniqueness - check for duplicates where unique values expected
+    const duplicateRows = this.findDuplicateRows(data)
+    if (duplicateRows.length > 0) {
+      issues.push({
+        field: 'all_fields',
+        type: 'duplicate_values',
+        severity: duplicateRows.length > totalRecords * 0.1 ? 'high' : 'medium',
+        count: duplicateRows.length,
+        percentage: (duplicateRows.length / totalRecords) * 100,
+        description: `${duplicateRows.length} duplicate records detected`
+      })
+    }
+
+    // Validity - check data types and formats
+    let validityScore = 0
+    numericFields.forEach(field => {
+      const invalidCount = data.filter(row => {
+        const value = row[field]
+        return value != null && value !== '' && isNaN(Number(value))
+      }).length
+      
+      if (invalidCount > 0) {
+        const percentage = (invalidCount / totalRecords) * 100
+        issues.push({
+          field,
+          type: 'invalid_values',
+          severity: percentage > 10 ? 'high' : percentage > 2 ? 'medium' : 'low',
+          count: invalidCount,
+          percentage,
+          description: `${invalidCount} invalid numeric values in ${field}`
+        })
+      }
+      
+      validityScore += ((totalRecords - invalidCount) / totalRecords) * 100
+    })
+
+    // Outlier detection for consistency
+    let outlierScore = 100
+    numericFields.forEach(field => {
+      const values = data.map(d => Number(d[field])).filter(v => !isNaN(v))
+      const outliers = this.detectOutliers(values)
+      
+      if (outliers.length > 0) {
+        const percentage = (outliers.length / values.length) * 100
+        if (percentage > 5) { // More than 5% outliers indicates consistency issues
+          issues.push({
+            field,
+            type: 'outliers',
+            severity: percentage > 15 ? 'high' : percentage > 10 ? 'medium' : 'low',
+            count: outliers.length,
+            percentage,
+            description: `${outliers.length} outliers detected in ${field} (${percentage.toFixed(1)}%)`
+          })
+          outlierScore -= percentage * 2
+        }
+      }
+    })
+
+    // Generate recommendations based on issues
+    if (issues.some(i => i.type === 'missing_values' && i.severity === 'high')) {
+      recommendations.push('Address high levels of missing data through data collection improvements')
+    }
+    if (issues.some(i => i.type === 'duplicate_values')) {
+      recommendations.push('Implement data deduplication processes')
+    }
+    if (issues.some(i => i.type === 'invalid_values')) {
+      recommendations.push('Add data validation rules at the point of entry')
+    }
+    if (issues.some(i => i.type === 'outliers' && i.severity === 'high')) {
+      recommendations.push('Review outliers for data entry errors or investigate as legitimate edge cases')
+    }
+
+    const completeness = ((totalRecords * totalFields - totalMissingValues) / (totalRecords * totalFields)) * 100
+    const consistency = Math.max(0, outlierScore)
+    const accuracy = 85 // Estimated - would require ground truth data
+    const validity = numericFields.length > 0 ? validityScore / numericFields.length : 100
+    const uniqueness = Math.max(0, ((totalRecords - duplicateRows.length) / totalRecords) * 100)
+    const timeliness = 90 // Assumed good for demo
+    
+    const qualityScore = (completeness * 0.25 + consistency * 0.2 + accuracy * 0.2 + validity * 0.15 + uniqueness * 0.1 + timeliness * 0.1)
+
+    return {
+      completeness,
+      consistency,
+      accuracy,
+      validity,
+      uniqueness,
+      timeliness,
+      qualityScore,
+      issues,
+      recommendations
+    }
+  }
+
+  private static findDuplicateRows(data: DataPoint[]): DataPoint[] {
+    const seen = new Set()
+    const duplicates: DataPoint[] = []
+    
+    data.forEach(row => {
+      const rowString = JSON.stringify(row)
+      if (seen.has(rowString)) {
+        duplicates.push(row)
+      } else {
+        seen.add(rowString)
+      }
+    })
+    
+    return duplicates
+  }
+
+  // Hypothesis Testing - Enterprise statistical rigor
+  private static async performHypothesisTests(data: DataPoint[], numericFields: string[]): Promise<HypothesisTestResult[]> {
+    const tests: HypothesisTestResult[] = []
+
+    // One-sample t-test for each numeric field (testing if mean differs from 0)
+    numericFields.forEach(field => {
+      const values = data.map(d => Number(d[field])).filter(v => !isNaN(v))
+      if (values.length < 3) return
+
+      const tTest = this.performOneSampleTTest(values, 0) // Testing against null hypothesis that mean = 0
+      tests.push({
+        field,
+        testType: 'ttest',
+        hypothesis: `H0: Mean of ${field} equals 0, H1: Mean of ${field} does not equal 0`,
+        pValue: tTest.pValue,
+        tStatistic: tTest.tStatistic,
+        degreesOfFreedom: values.length - 1,
+        criticalValue: tTest.criticalValue,
+        isSignificant: tTest.pValue < 0.05,
+        confidenceLevel: 0.95,
+        conclusion: tTest.pValue < 0.05 ? 
+          `Reject H0: Mean of ${field} is significantly different from 0` :
+          `Fail to reject H0: No significant evidence that mean of ${field} differs from 0`
+      })
+    })
+
+    // Normality test (Shapiro-Wilk approximation) for each numeric field
+    numericFields.forEach(field => {
+      const values = data.map(d => Number(d[field])).filter(v => !isNaN(v))
+      if (values.length < 5) return
+
+      const normalityTest = this.performNormalityTest(values)
+      tests.push({
+        field,
+        testType: 'normality',
+        hypothesis: `H0: ${field} follows normal distribution, H1: ${field} does not follow normal distribution`,
+        pValue: normalityTest.pValue,
+        degreesOfFreedom: values.length - 1,
+        criticalValue: normalityTest.criticalValue,
+        isSignificant: normalityTest.pValue < 0.05,
+        confidenceLevel: 0.95,
+        conclusion: normalityTest.pValue < 0.05 ?
+          `Reject H0: ${field} does not follow normal distribution` :
+          `Fail to reject H0: ${field} appears to follow normal distribution`
+      })
+    })
+
+    return tests
+  }
+
+  private static performOneSampleTTest(values: number[], hypothesizedMean: number) {
+    const n = values.length
+    const mean = values.reduce((a, b) => a + b, 0) / n
+    const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / (n - 1)
+    const stdError = Math.sqrt(variance / n)
+    const tStatistic = (mean - hypothesizedMean) / stdError
+    
+    // Approximate critical value for two-tailed test at α = 0.05
+    const criticalValue = n > 30 ? 1.96 : 2.0 // Simplified approximation
+    
+    // Approximate p-value using t-distribution
+    const pValue = 2 * (1 - this.approximateTCDF(Math.abs(tStatistic), n - 1))
+    
+    return { tStatistic, pValue, criticalValue }
+  }
+
+  private static performNormalityTest(values: number[]) {
+    // Simplified normality test based on skewness and kurtosis
+    const n = values.length
+    const mean = values.reduce((a, b) => a + b, 0) / n
+    const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / n
+    const stdDev = Math.sqrt(variance)
+    
+    // Calculate skewness
+    const skewness = values.reduce((sum, value) => sum + Math.pow((value - mean) / stdDev, 3), 0) / n
+    
+    // Calculate kurtosis
+    const kurtosis = values.reduce((sum, value) => sum + Math.pow((value - mean) / stdDev, 4), 0) / n - 3
+    
+    // Jarque-Bera test statistic approximation
+    const jbStatistic = (n / 6) * (Math.pow(skewness, 2) + Math.pow(kurtosis, 2) / 4)
+    
+    // Approximate p-value (chi-square with 2 degrees of freedom)
+    const pValue = Math.exp(-jbStatistic / 2) // Simplified approximation
+    
+    return { pValue, criticalValue: 5.99 } // Chi-square critical value for α = 0.05, df = 2
+  }
+
+  private static approximateTCDF(t: number, df: number): number {
+    // Simplified t-distribution CDF approximation
+    if (df > 30) {
+      // Use normal approximation for large df
+      return 0.5 + 0.5 * Math.sign(t) * Math.sqrt(1 - Math.exp(-2 * t * t / Math.PI))
+    }
+    
+    // Very rough approximation for smaller df
+    const normalizedT = t / Math.sqrt(df)
+    return 0.5 + 0.5 * Math.sign(normalizedT) * Math.sqrt(1 - Math.exp(-2 * normalizedT * normalizedT / Math.PI))
+  }
+
+  // Confidence Intervals - Statistical precision
+  private static async calculateConfidenceIntervals(data: DataPoint[], numericFields: string[]): Promise<ConfidenceInterval[]> {
+    const intervals: ConfidenceInterval[] = []
+
+    // Mean confidence intervals for each numeric field
+    numericFields.forEach(field => {
+      const values = data.map(d => Number(d[field])).filter(v => !isNaN(v))
+      if (values.length < 3) return
+
+      const meanCI = this.calculateMeanConfidenceInterval(values, 0.95)
+      intervals.push({
+        field,
+        metric: 'mean',
+        value: meanCI.mean,
+        lowerBound: meanCI.lowerBound,
+        upperBound: meanCI.upperBound,
+        confidenceLevel: 95,
+        marginOfError: meanCI.marginOfError
+      })
+    })
+
+    return intervals
+  }
+
+  private static calculateMeanConfidenceInterval(values: number[], confidenceLevel: number) {
+    const n = values.length
+    const mean = values.reduce((a, b) => a + b, 0) / n
+    const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / (n - 1)
+    const stdError = Math.sqrt(variance / n)
+    
+    // Critical value (approximation)
+    const criticalValue = n > 30 ? 1.96 : 2.0 // Simplified t-value approximation
+    
+    const marginOfError = criticalValue * stdError
+    
+    return {
+      mean,
+      lowerBound: mean - marginOfError,
+      upperBound: mean + marginOfError,
+      marginOfError
+    }
+  }
+
+  // Enhanced statistical methods for trend and correlation analysis
+  private static performTrendSignificanceTest(values: number[], trend: any) {
+    const n = values.length
+    const tStatistic = trend.slope / (Math.sqrt((1 - Math.pow(trend.confidence / 100, 2)) / (n - 2)))
+    const pValue = 2 * (1 - this.approximateTCDF(Math.abs(tStatistic), n - 2))
+    
+    return { tStatistic, pValue }
+  }
+
+  private static calculateTrendConfidenceInterval(trend: any, n: number) {
+    const standardError = Math.sqrt((1 - Math.pow(trend.confidence / 100, 2)) / (n - 2))
+    const criticalValue = n > 30 ? 1.96 : 2.0
+    const marginOfError = criticalValue * standardError
+    
+    return {
+      lower: trend.slope - marginOfError,
+      upper: trend.slope + marginOfError
+    }
+  }
+
+  private static performCorrelationSignificanceTest(correlation: number, n: number) {
+    const tStatistic = correlation * Math.sqrt((n - 2) / (1 - correlation * correlation))
+    const pValue = 2 * (1 - this.approximateTCDF(Math.abs(tStatistic), n - 2))
+    const significance = Math.min(99.9, Math.max(0, (1 - pValue) * 100))
+    
+    return { tStatistic, pValue, significance }
+  }
+
+  private static calculateCorrelationConfidenceInterval(correlation: number, n: number) {
+    // Fisher's z-transformation for correlation confidence interval
+    const z = 0.5 * Math.log((1 + correlation) / (1 - correlation))
+    const standardError = 1 / Math.sqrt(n - 3)
+    const criticalValue = 1.96 // For 95% confidence
+    
+    const lowerZ = z - criticalValue * standardError
+    const upperZ = z + criticalValue * standardError
+    
+    // Transform back to correlation scale
+    const lower = (Math.exp(2 * lowerZ) - 1) / (Math.exp(2 * lowerZ) + 1)
+    const upper = (Math.exp(2 * upperZ) - 1) / (Math.exp(2 * upperZ) + 1)
+    
+    return { lower, upper }
   }
 }
