@@ -28,7 +28,6 @@ import {
   Area, 
   BarChart, 
   Bar, 
-  Line,
   PieChart as RechartsPieChart,
   Pie,
   Cell,
@@ -417,10 +416,11 @@ const DashboardPage = () => {
                     fillOpacity={0.1}
                     strokeWidth={2}
                   />
-                  <Line 
+                  <Area 
                     type="monotone" 
                     dataKey="target" 
                     stroke="#ef4444" 
+                    fill="transparent"
                     strokeDasharray="5 5"
                     strokeWidth={2}
                   />

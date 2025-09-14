@@ -17,7 +17,11 @@
       "Bash(git commit:*)",
       "Bash(gh repo create:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm run preview:*)",
+      "Bash(vercel:*)",
+      "WebFetch(domain:zenalyst-h71a974u8-charles-projects-446d4486.vercel.app)",
+      "WebFetch(domain:zenalyst.vercel.app)"
     ],
     "deny": [],
     "ask": []
