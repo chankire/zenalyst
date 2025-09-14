@@ -116,6 +116,32 @@ const DashboardPage = () => {
     }
   }
 
+  // Default insights for demo/fallback scenarios
+  const insights = {
+    phd: {
+      title: "PhD Analyst Perspective",
+      content: "Statistical analysis reveals a significant correlation (r=0.847, p<0.001) between user engagement metrics and revenue growth. The observed 12.3% revenue increase demonstrates strong seasonal variance (σ²=0.23) with 95% confidence intervals suggesting sustainable growth trajectory. Cohort analysis indicates improving user retention rates across all segments.",
+      confidence: 94,
+      dataQuality: "High",
+      methodology: "Multivariate regression analysis with seasonal decomposition"
+    },
+    ceo: {
+      title: "Strategic Executive Summary", 
+      content: "Our Q2 performance significantly exceeded targets with $2.4M in revenue (+12.3% MoM). Key strategic wins include expanding our Asia Pacific presence (+22.1% growth) and improving conversion efficiency. However, we're seeing a concerning dip in conversion rates (-2.1%) that requires immediate attention. Recommend accelerating product development and customer success initiatives.",
+      confidence: 92,
+      keyActions: ["Expand APAC team", "Address conversion bottleneck", "Accelerate product roadmap"],
+      riskLevel: "Medium"
+    },
+    manager: {
+      title: "Operational Action Plan",
+      content: "Immediate priorities: 1) Investigate conversion rate decline - likely due to pricing changes implemented in April. 2) Capitalize on strong APAC growth by increasing marketing spend by 30%. 3) Optimize organic search strategy to maintain 35% channel share. Timeline: Complete analysis by Friday, implement fixes by end of month.",
+      confidence: 88,
+      timeline: "2 weeks",
+      resources: "3 team members",
+      priority: "High"
+    }
+  }
+
   // Generate insights based on analysis results
   const enhancedInsights = useMemo(() => {
     if (!analysisResults) return insights
@@ -208,31 +234,6 @@ const DashboardPage = () => {
     { region: 'Latin America', sales: 180000, growth: 8.9 },
     { region: 'Middle East', sales: 95000, growth: 18.5 }
   ]
-
-  const insights = {
-    phd: {
-      title: "PhD Analyst Perspective",
-      content: "Statistical analysis reveals a significant correlation (r=0.847, p<0.001) between user engagement metrics and revenue growth. The observed 12.3% revenue increase demonstrates strong seasonal variance (σ²=0.23) with 95% confidence intervals suggesting sustainable growth trajectory. Cohort analysis indicates improving user retention rates across all segments.",
-      confidence: 94,
-      dataQuality: "High",
-      methodology: "Multivariate regression analysis with seasonal decomposition"
-    },
-    ceo: {
-      title: "Strategic Executive Summary", 
-      content: "Our Q2 performance significantly exceeded targets with $2.4M in revenue (+12.3% MoM). Key strategic wins include expanding our Asia Pacific presence (+22.1% growth) and improving conversion efficiency. However, we're seeing a concerning dip in conversion rates (-2.1%) that requires immediate attention. Recommend accelerating product development and customer success initiatives.",
-      confidence: 92,
-      keyActions: ["Expand APAC team", "Address conversion bottleneck", "Accelerate product roadmap"],
-      riskLevel: "Medium"
-    },
-    manager: {
-      title: "Operational Action Plan",
-      content: "Immediate priorities: 1) Investigate conversion rate decline - likely due to pricing changes implemented in April. 2) Capitalize on strong APAC growth by increasing marketing spend by 30%. 3) Optimize organic search strategy to maintain 35% channel share. Timeline: Complete analysis by Friday, implement fixes by end of month.",
-      confidence: 88,
-      timeline: "2 weeks",
-      resources: "3 team members",
-      priority: "High"
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background">
