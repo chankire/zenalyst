@@ -165,6 +165,31 @@ const DashboardPage = () => {
     return sampleData
   }
 
+  // Handle adding field to chart configuration
+  const handleAddFieldToChart = (field: string, type: string) => {
+    // Smart field assignment based on type
+    if (type === 'date' || field === 'date') {
+      // Date fields should go to X-axis
+      setChartConfig(prev => ({ ...prev, xAxis: field }))
+    } else if (type === 'number' || type === 'currency' || type === 'percentage') {
+      // Numeric fields should go to Y-axis
+      setChartConfig(prev => ({ ...prev, yAxis: field }))
+    } else if (type === 'category') {
+      // Category fields can go to X-axis or groupBy
+      if (!chartConfig.xAxis) {
+        setChartConfig(prev => ({ ...prev, xAxis: field }))
+      } else if (!chartConfig.groupBy) {
+        setChartConfig(prev => ({ ...prev, groupBy: field }))
+      } else {
+        // If both are filled, replace X-axis
+        setChartConfig(prev => ({ ...prev, xAxis: field }))
+      }
+    } else {
+      // Default to X-axis if type is unknown
+      setChartConfig(prev => ({ ...prev, xAxis: field }))
+    }
+  }
+
   // Render dynamic chart based on configuration
   const renderPreviewChart = () => {
     const { chartType, xAxis, yAxis, groupBy } = chartConfig
@@ -997,7 +1022,10 @@ const DashboardPage = () => {
                             {item.type}
                           </span>
                         </div>
-                        <button className="text-xs text-primary hover:underline">
+                        <button 
+                          onClick={() => handleAddFieldToChart(item.field, item.type)}
+                          className="text-xs text-primary hover:underline"
+                        >
                           Add to Chart
                         </button>
                       </div>

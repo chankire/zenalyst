@@ -276,11 +276,176 @@ const ProjectsPage = () => {
     }
   }
 
+  const handleSampleDataset = async (datasetId: string) => {
+    setIsAnalyzing(true)
+    setAnalysisProgress('Loading sample dataset...')
+    
+    try {
+      let sampleData: any[] = []
+      let fileName = ''
+      
+      // Generate different sample data based on dataset type
+      switch (datasetId) {
+        case 'sales-data':
+          fileName = 'sales_data_q4_2024.csv'
+          sampleData = generateSalesData()
+          break
+        case 'customer-survey':
+          fileName = 'customer_survey_results.xlsx'
+          sampleData = generateCustomerSurveyData()
+          break
+        case 'marketing-metrics':
+          fileName = 'marketing_campaign_metrics.json'
+          sampleData = generateMarketingData()
+          break
+        case 'product-performance':
+          fileName = 'product_performance_data.csv'
+          sampleData = generateProductData()
+          break
+        default:
+          fileName = 'sample_data.csv'
+          sampleData = generateSalesData()
+      }
+      
+      setAnalysisProgress('Initializing advanced analytics...')
+      const analytics = new AdvancedAnalytics()
+      
+      setAnalysisProgress('Performing instant analysis...')
+      const analysisResults = await analytics.performInstantAnalysis(sampleData)
+      
+      // Store analysis results in localStorage for dashboard to use
+      localStorage.setItem('zenalyst_analysis_results', JSON.stringify(analysisResults))
+      localStorage.setItem('zenalyst_raw_data', JSON.stringify(sampleData))
+      localStorage.setItem('zenalyst_file_name', fileName)
+      
+      setAnalysisProgress('Complete! Loading dashboard...')
+      
+      // Navigate to dashboard with sample data
+      setShowUploadModal(false)
+      setIsAnalyzing(false)
+      navigate('/dashboard?uploaded=true')
+    } catch (error) {
+      console.error('Sample data analysis failed:', error)
+      setIsAnalyzing(false)
+      setAnalysisProgress('')
+      // Navigate to demo dashboard on error
+      setShowUploadModal(false)
+      navigate('/dashboard?demo=true')
+    }
+  }
+
+  // Sample data generators
+  const generateSalesData = () => {
+    const data = []
+    const regions = ['North America', 'Europe', 'Asia Pacific', 'Latin America']
+    const months = ['Oct', 'Nov', 'Dec']
+    
+    for (let i = 0; i < 15423; i++) {
+      data.push({
+        month: months[i % 3],
+        region: regions[i % 4],
+        sales_amount: Math.random() * 5000 + 1000,
+        units_sold: Math.floor(Math.random() * 100) + 10,
+        product_category: ['Electronics', 'Clothing', 'Home'][i % 3],
+        salesperson: `Sales_${Math.floor(i / 100) + 1}`,
+        commission: Math.random() * 500 + 50
+      })
+    }
+    return data
+  }
+
+  const generateCustomerSurveyData = () => {
+    const data = []
+    const satisfactionLevels = ['Very Satisfied', 'Satisfied', 'Neutral', 'Dissatisfied', 'Very Dissatisfied']
+    
+    for (let i = 0; i < 8901; i++) {
+      data.push({
+        customer_id: `CUST_${i + 1000}`,
+        satisfaction_score: Math.floor(Math.random() * 5) + 1,
+        satisfaction_level: satisfactionLevels[Math.floor(Math.random() * 5)],
+        nps_score: Math.floor(Math.random() * 11) - 5,
+        support_rating: Math.floor(Math.random() * 5) + 1,
+        product_quality: Math.floor(Math.random() * 5) + 1,
+        response_date: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0],
+        customer_segment: ['Enterprise', 'SMB', 'Individual'][i % 3]
+      })
+    }
+    return data
+  }
+
+  const generateMarketingData = () => {
+    const data = []
+    const campaigns = ['Google Ads', 'Facebook Ads', 'LinkedIn Ads', 'Email Campaign', 'Content Marketing']
+    
+    for (let i = 0; i < 3245; i++) {
+      data.push({
+        campaign_name: campaigns[i % 5],
+        impressions: Math.floor(Math.random() * 100000) + 10000,
+        clicks: Math.floor(Math.random() * 5000) + 100,
+        conversions: Math.floor(Math.random() * 100) + 5,
+        cost: Math.random() * 1000 + 100,
+        ctr: (Math.random() * 5 + 1).toFixed(2),
+        conversion_rate: (Math.random() * 3 + 0.5).toFixed(2),
+        cost_per_click: (Math.random() * 2 + 0.5).toFixed(2),
+        date: new Date(2024, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0]
+      })
+    }
+    return data
+  }
+
+  const generateProductData = () => {
+    const data = []
+    const products = ['Product A', 'Product B', 'Product C', 'Product D', 'Product E']
+    
+    for (let i = 0; i < 28567; i++) {
+      data.push({
+        product_name: products[i % 5],
+        revenue: Math.random() * 1000 + 50,
+        units_sold: Math.floor(Math.random() * 50) + 1,
+        page_views: Math.floor(Math.random() * 1000) + 100,
+        unique_visitors: Math.floor(Math.random() * 500) + 50,
+        bounce_rate: (Math.random() * 50 + 20).toFixed(1),
+        avg_session_duration: Math.floor(Math.random() * 300) + 60,
+        user_rating: (Math.random() * 2 + 3).toFixed(1),
+        category: ['Electronics', 'Clothing', 'Home', 'Sports'][i % 4]
+      })
+    }
+    return data
+  }
+
   const sampleDatasets = [
-    { name: 'Sales Data Q4 2024', size: '2.3 MB', type: 'CSV', records: '15,423' },
-    { name: 'Customer Survey Results', size: '1.8 MB', type: 'Excel', records: '8,901' },
-    { name: 'Marketing Campaign Metrics', size: '987 KB', type: 'JSON', records: '3,245' },
-    { name: 'Product Performance Data', size: '4.1 MB', type: 'CSV', records: '28,567' }
+    { 
+      id: 'sales-data', 
+      name: 'Sales Data Q4 2024', 
+      size: '2.3 MB', 
+      type: 'CSV', 
+      records: '15,423',
+      description: 'Quarterly sales performance across regions'
+    },
+    { 
+      id: 'customer-survey', 
+      name: 'Customer Survey Results', 
+      size: '1.8 MB', 
+      type: 'Excel', 
+      records: '8,901',
+      description: 'Customer satisfaction and feedback analysis'
+    },
+    { 
+      id: 'marketing-metrics', 
+      name: 'Marketing Campaign Metrics', 
+      size: '987 KB', 
+      type: 'JSON', 
+      records: '3,245',
+      description: 'Digital marketing campaign performance'
+    },
+    { 
+      id: 'product-performance', 
+      name: 'Product Performance Data', 
+      size: '4.1 MB', 
+      type: 'CSV', 
+      records: '28,567',
+      description: 'Product sales and user engagement metrics'
+    }
   ]
 
   return (
@@ -470,7 +635,7 @@ const ProjectsPage = () => {
                   {sampleDatasets.map((dataset, index) => (
                     <button
                       key={index}
-                      onClick={handleCreateDashboard}
+                      onClick={() => handleSampleDataset(dataset.id)}
                       className="w-full p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors text-left"
                     >
                       <div className="flex items-center justify-between">
@@ -480,6 +645,9 @@ const ProjectsPage = () => {
                             <p className="font-medium">{dataset.name}</p>
                             <p className="text-sm text-muted-foreground">
                               {dataset.records} records • {dataset.size} • {dataset.type}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {dataset.description}
                             </p>
                           </div>
                         </div>
